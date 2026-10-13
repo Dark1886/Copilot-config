@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """Config installer - copies from source repo to target tool directory."""
 
 import argparse
@@ -15,8 +15,10 @@ from pathlib import Path
 MANIFEST_FILE = ".install-manifest.json"
 MANIFEST_VERSION = 1
 
-ALWAYS_EXCLUSIONS = {".git", ".github", "CLAUDE.md", "README.md"}
-ROOT_EXCLUSIONS = {"install.py", "install.sh", ".gitignore", "LICENSE", "manifest-plan.md", MANIFEST_FILE}
+ALWAYS_EXCLUSIONS = {".git", ".github"}
+# Per-directory CLAUDE.md/README.md pairs are installed (agents navigate by
+# them); only the repo's own top-level README is excluded.
+ROOT_EXCLUSIONS = {"install.py", "install.sh", ".gitignore", "LICENSE", "README.md", "manifest-plan.md", MANIFEST_FILE}
 
 TOOL_PROFILES = {
     "claude": {
@@ -530,7 +532,7 @@ def check_dependencies() -> None:
     except ImportError:
         print()
         print("WARNING: pydantic not found. Skills may fail at runtime.")
-        print("  Install with: pip3 install --user pydantic")
+        print("  Install with: python -m pip install --user pydantic")
 
 
 def main():
