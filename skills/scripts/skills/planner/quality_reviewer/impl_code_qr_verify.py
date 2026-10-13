@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """QR verification for impl-code phase.
 
 Single-item verification mode for parallel QR dispatch.

@@ -20,7 +20,7 @@ Violating this causes unrecoverable QR loops.
 ORCHESTRATOR CONTRACT:
 All decompose scripts MUST implement get_step_guidance(step, module_path, **kwargs)
 returning {title: str, actions: list[str], next: str}.
-Called via: python3 -m {module_path} --step N --state-dir {dir}
+Called via: python -m {module_path} --step N --state-dir {dir}
 """
 
 import json
@@ -69,7 +69,7 @@ def format_assign_cmd(state_dir: str, phase: str, prefix: str) -> str:
     WHY CLI: Group assignments use the qr CLI tool for state mutation.
     """
     return f"""OUTPUT:
-  python3 -m skills.planner.cli.qr --state-dir {state_dir} --qr-phase {phase} \\
+  python -m skills.planner.cli.qr --state-dir {state_dir} --qr-phase {phase} \\
     assign-group <item_id> --group-id {prefix}<name>"""
 
 
@@ -198,7 +198,7 @@ def dispatch_step(
         Dict with title, actions, next keys
     """
     state_dir_arg = f" --state-dir {state_dir}" if state_dir else ""
-    next_cmd = lambda s: f"python3 -m {module_path} --step {s}{state_dir_arg}"
+    next_cmd = lambda s: f"python -m {module_path} --step {s}{state_dir_arg}"
 
     # Step 1: Absorb context (phase-specific)
     if step == 1:
@@ -406,10 +406,10 @@ def step_9_structural_grouping(state_dir: str, phase: str, module_path: str) -> 
             "   - Set group_id = 'umbrella'",
             "",
             f"Execute via CLI:",
-            f"  python3 -m skills.planner.cli.qr --state-dir {state_dir} --qr-phase {phase} \\",
+            f"  python -m skills.planner.cli.qr --state-dir {state_dir} --qr-phase {phase} \\",
             "    assign-group <item_id> --group-id <group_id>",
         ],
-        "next": f"python3 -m {module_path} --step 10 --state-dir {state_dir}",
+        "next": f"python -m {module_path} --step 10 --state-dir {state_dir}",
     }
 
 
@@ -454,7 +454,7 @@ def step_10_component_grouping(
             "",
             f"If no component groups: # No component groups. {len(ungrouped)} items to Phase 2.",
         ],
-        "next": f"python3 -m {module_path} --step 11 --state-dir {state_dir}",
+        "next": f"python -m {module_path} --step 11 --state-dir {state_dir}",
     }
 
 
@@ -494,7 +494,7 @@ def step_11_concern_grouping(
             "",
             format_assign_cmd(state_dir, phase, "concern-"),
         ],
-        "next": f"python3 -m {module_path} --step 12 --state-dir {state_dir}",
+        "next": f"python -m {module_path} --step 12 --state-dir {state_dir}",
     }
 
 
@@ -528,7 +528,7 @@ def step_12_affinity_grouping(state_dir: str, phase: str, module_path: str) -> d
             "",
             "Remaining ungrouped items become singletons.",
         ],
-        "next": f"python3 -m {module_path} --step 13 --state-dir {state_dir}",
+        "next": f"python -m {module_path} --step 13 --state-dir {state_dir}",
     }
 
 

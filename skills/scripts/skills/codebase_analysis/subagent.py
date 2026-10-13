@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """
 Codebase Analysis Explore - Focus-area exploration for codebase understanding.
 
@@ -151,7 +151,7 @@ def build_next_command(step: int) -> str | None:
     """Build invoke command for next step."""
     if step >= TOTAL_STEPS:
         return None
-    return f"python3 -m {MODULE_PATH} --step {step + 1}"
+    return f"python -m {MODULE_PATH} --step {step + 1}"
 
 
 # ============================================================================

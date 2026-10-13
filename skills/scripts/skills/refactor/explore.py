@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """
 Refactor Explore - Category-specific exploration for code smell detection.
 
@@ -83,7 +83,7 @@ def load_category_block(category_ref: str, mode: str = "code") -> str:
 def format_next_step(step: int, category_ref: str, mode: str = "code", scope: str | None = None) -> str:
     """Format the invoke-after block for next step."""
     scope_arg = f" --scope {shlex.quote(scope)}" if scope else ""
-    cmd = f"python3 -m {MODULE_PATH} --step {step} --category {category_ref} --mode {mode}{scope_arg}"
+    cmd = f"python -m {MODULE_PATH} --step {step} --category {category_ref} --mode {mode}{scope_arg}"
     return render_invoke_after(InvokeAfterNode(cmd=cmd))
 
 

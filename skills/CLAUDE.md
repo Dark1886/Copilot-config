@@ -47,11 +47,11 @@ Failure to follow these patterns creates technical debt and inconsistency across
 All Python skill scripts are invoked as modules from `scripts/`. When working
 from `~/.claude/` directly (development), use the literal path:
 
-<invoke working-dir=".claude/skills/scripts" cmd="python3 -m skills.<skill_name>.<module> --step 1" />
+<invoke working-dir=".claude/skills/scripts" cmd="python -m skills.<skill_name>.<module> --step 1" />
 
 Example:
 
-<invoke working-dir=".claude/skills/scripts" cmd="python3 -m skills.problem_analysis.analyze --step 1" />
+<invoke working-dir=".claude/skills/scripts" cmd="python -m skills.problem_analysis.analyze --step 1" />
 
 Note: source templates are named `SKILL.tpl.md` in each skill directory. The
 installer renders them to `SKILL.md` and substitutes variables like

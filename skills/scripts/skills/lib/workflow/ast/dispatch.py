@@ -9,7 +9,7 @@ SubagentDispatchNode: Single agent dispatch
     Example:
         node = SubagentDispatchNode(
             agent_type="general-purpose",
-            command='python3 -m skills.dev --step 1',
+            command='python -m skills.dev --step 1',
         )
 
 TemplateDispatchNode: Parallel dispatch with parameterized template
@@ -25,7 +25,7 @@ TemplateDispatchNode: Parallel dispatch with parameterized template
                 {"category_name": "Naming", "mode": "design"},
                 {"category_name": "Structure", "mode": "code"},
             ),
-            command='python3 -m skills.explore --category $category_name --mode $mode',
+            command='python -m skills.explore --category $category_name --mode $mode',
             model="haiku",
         )
         # Renderer expands to 2 agents with $var substituted per-target
@@ -44,7 +44,7 @@ RosterDispatchNode: Parallel dispatch with unique prompts
                 "Analyze from optimist perspective: assume success is achievable",
                 "Analyze from pragmatist perspective: focus on implementation",
             ),
-            command='python3 -m skills.subagent --step 1',
+            command='python -m skills.subagent --step 1',
             model="sonnet",
         )
         # Each agent receives shared_context + unique prompt

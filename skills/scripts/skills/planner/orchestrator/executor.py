@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """
 Plan Executor - Execute approved plans through delegation.
 
@@ -125,7 +125,7 @@ STEPS = {
             "Before QR code review, run post-implementation QA.",
             "",
             "1. DISPATCH QA decomposition:",
-            "   python3 -m skills.planner.qa.decompose --step 1",
+            "   python -m skills.planner.qa.decompose --step 1",
             "   Context: PLAN_FILE, MODIFIED_FILES, STATE_DIR (if available)",
             "   Phase: post-implementation",
             "",
@@ -246,10 +246,10 @@ def format_gate(step: int, gate: GateConfig, qr: QRState, total_steps: int) -> s
 
     # Determine next command
     if qr.passed and gate.pass_step is not None:
-        next_cmd = f"python3 -m {MODULE_PATH} --step {gate.pass_step}"
+        next_cmd = f"python -m {MODULE_PATH} --step {gate.pass_step}"
     else:
         next_iteration = qr.iteration + 1
-        next_cmd = f"python3 -m {MODULE_PATH} --step {gate.work_step} --qr-fail --qr-iteration {next_iteration}"
+        next_cmd = f"python -m {MODULE_PATH} --step {gate.work_step} --qr-fail --qr-iteration {next_iteration}"
 
     return format_step(body, next_cmd, title=f"{gate.qr_name} Gate")
 
@@ -271,7 +271,7 @@ def format_step_3_implementation(qr: QRState, total_steps: int, milestone_count:
         actions.append("")
 
         mode_script = get_mode_script_path("dev/fix-code.py")
-        invoke_cmd = f"python3 -m {mode_script} --step 1 --qr-fail --qr-iteration {qr.iteration}"
+        invoke_cmd = f"python -m {mode_script} --step 1 --qr-fail --qr-iteration {qr.iteration}"
 
         actions.append(subagent_dispatch(
             agent_type="developer",
@@ -321,7 +321,7 @@ def format_step_3_implementation(qr: QRState, total_steps: int, milestone_count:
         ])
 
     body = "\n".join(actions)
-    next_cmd = f"python3 -m {MODULE_PATH} --step 4"
+    next_cmd = f"python -m {MODULE_PATH} --step 4"
 
     return format_step(body, next_cmd, title=title)
 
@@ -345,7 +345,7 @@ def format_step_6_documentation(qr: QRState, total_steps: int) -> str:
         actions.append(ORCHESTRATOR_CONSTRAINT)
         actions.append("")
 
-        invoke_cmd = f"python3 -m {mode_script} --step 1 --qr-fail --qr-iteration {qr.iteration}"
+        invoke_cmd = f"python -m {mode_script} --step 1 --qr-fail --qr-iteration {qr.iteration}"
         actions.append(subagent_dispatch(
             agent_type="technical-writer",
             command=invoke_cmd,
@@ -354,14 +354,14 @@ def format_step_6_documentation(qr: QRState, total_steps: int) -> str:
         actions.append(ORCHESTRATOR_CONSTRAINT)
         actions.append("")
 
-        invoke_cmd = f"python3 -m {mode_script} --step 1"
+        invoke_cmd = f"python -m {mode_script} --step 1"
         actions.append(subagent_dispatch(
             agent_type="technical-writer",
             command=invoke_cmd,
         ))
 
     body = "\n".join(actions)
-    next_cmd = f"python3 -m {MODULE_PATH} --step 7"
+    next_cmd = f"python -m {MODULE_PATH} --step 7"
 
     return format_step(body, next_cmd, title=title)
 
@@ -378,14 +378,14 @@ def format_step_1_planning(qr: QRState, total_steps: int, reconciliation_check: 
         "=" * 70,
     ])
     if reconciliation_check:
-        next_cmd = f"python3 -m {MODULE_PATH} --step 2 --reconciliation-check"
+        next_cmd = f"python -m {MODULE_PATH} --step 2 --reconciliation-check"
     else:
         actions.extend([
             "Proceed to Implementation step.",
             "Use the wave groupings from your analysis.",
             "=" * 70,
         ])
-        next_cmd = f"python3 -m {MODULE_PATH} --step 3"
+        next_cmd = f"python -m {MODULE_PATH} --step 3"
 
     body_parts = []
     body_parts.append(THINKING_EFFICIENCY)
@@ -413,7 +413,7 @@ def format_step_4_code_qr(qr: QRState, total_steps: int, **kw) -> str:
     mode_script = get_mode_script_path(info["mode_script"])
     dispatch_agent = info.get("dispatch_agent", "agent")
     invoke_suffix = info.get("invoke_suffix", "")
-    invoke_cmd = f"python3 -m {mode_script} --step 1{invoke_suffix}"
+    invoke_cmd = f"python -m {mode_script} --step 1{invoke_suffix}"
 
     actions.append(subagent_dispatch(
         agent_type=dispatch_agent,
@@ -425,8 +425,8 @@ def format_step_4_code_qr(qr: QRState, total_steps: int, **kw) -> str:
     actions.extend(post_dispatch)
 
     body = "\n".join(actions)
-    if_pass = f"python3 -m {MODULE_PATH} --step 5 --qr-status pass"
-    if_fail = f"python3 -m {MODULE_PATH} --step 5 --qr-status fail"
+    if_pass = f"python -m {MODULE_PATH} --step 5 --qr-status pass"
+    if_fail = f"python -m {MODULE_PATH} --step 5 --qr-status fail"
 
     return format_step(body, title=info["title"], if_pass=if_pass, if_fail=if_fail)
 
@@ -448,7 +448,7 @@ def format_step_7_doc_qr(qr: QRState, total_steps: int, **kw) -> str:
     mode_script = get_mode_script_path(info["mode_script"])
     dispatch_agent = info.get("dispatch_agent", "agent")
     invoke_suffix = info.get("invoke_suffix", "")
-    invoke_cmd = f"python3 -m {mode_script} --step 1{invoke_suffix}"
+    invoke_cmd = f"python -m {mode_script} --step 1{invoke_suffix}"
 
     actions.append(subagent_dispatch(
         agent_type=dispatch_agent,
@@ -463,8 +463,8 @@ def format_step_7_doc_qr(qr: QRState, total_steps: int, **kw) -> str:
     actions.extend(extra_instructions)
 
     body = "\n".join(actions)
-    if_pass = f"python3 -m {MODULE_PATH} --step 8 --qr-status pass"
-    if_fail = f"python3 -m {MODULE_PATH} --step 8 --qr-status fail"
+    if_pass = f"python -m {MODULE_PATH} --step 8 --qr-status pass"
+    if_fail = f"python -m {MODULE_PATH} --step 8 --qr-status fail"
 
     return format_step(body, title=info["title"], if_pass=if_pass, if_fail=if_fail)
 
@@ -517,7 +517,7 @@ def format_output(step: int,
         fix_actions.append("")
 
         mode_script = get_mode_script_path(f"{fix_target}/fix.py")
-        invoke_cmd = f"python3 -m {mode_script} --step 1 --qr-fail --qr-iteration {qr.iteration}"
+        invoke_cmd = f"python -m {mode_script} --step 1 --qr-fail --qr-iteration {qr.iteration}"
 
         fix_actions.append(subagent_dispatch(
             agent_type=fix_target,
@@ -525,7 +525,7 @@ def format_output(step: int,
         ))
 
         body = "\n".join(fix_actions)
-        next_cmd = f"python3 -m {MODULE_PATH} --step {step}"
+        next_cmd = f"python -m {MODULE_PATH} --step {step}"
 
         return format_step(body, next_cmd, title=f"{info['title']} - Fix Mode")
 
@@ -551,7 +551,7 @@ def format_output(step: int,
         mode_script = get_mode_script_path(info["mode_script"])
         dispatch_agent = info.get("dispatch_agent", "agent")
         invoke_suffix = info.get("invoke_suffix", "")
-        invoke_cmd = f"python3 -m {mode_script} --step 1{invoke_suffix}"
+        invoke_cmd = f"python -m {mode_script} --step 1{invoke_suffix}"
 
         actions.append(subagent_dispatch(
             agent_type=dispatch_agent,
@@ -570,7 +570,7 @@ def format_output(step: int,
         actions.append("EXECUTION COMPLETE - Present retrospective to user.")
         next_cmd = ""
     else:
-        next_cmd = f"python3 -m {MODULE_PATH} --step {step + 1}"
+        next_cmd = f"python -m {MODULE_PATH} --step {step + 1}"
 
     body = "\n".join(actions)
     return format_step(body, next_cmd, title=info["title"])

@@ -8,7 +8,7 @@ Modules:
   plan: plan.json manipulation (milestones, intents, changes, docs)
   qr: qr-{phase}.json atomic updates (for parallel verify agents)
 
-Note: plan module is invoked via `python3 -m skills.planner.cli.plan`,
+Note: plan module is invoked via `python -m skills.planner.cli.plan`,
 not imported. Eager import here would cause RuntimeWarning during -m execution.
 """
 

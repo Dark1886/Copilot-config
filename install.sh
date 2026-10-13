@@ -95,7 +95,7 @@ OPENCLAW_DISCOVERED_TARGETS=()
 
 normalize_path() {
     local raw="$1"
-    python3 - "$raw" <<'PY'
+    python - "$raw" <<'PY'
 import os
 import pathlib
 import sys
@@ -223,13 +223,13 @@ check_prereqs() {
         echo "ERROR: git is required but not found." >&2
         exit 1
     fi
-    if ! command -v python3 &>/dev/null; then
-        echo "ERROR: python3 is required but not found." >&2
+    if ! command -v python &>/dev/null; then
+        echo "ERROR: python is required but not found." >&2
         exit 1
     fi
     local py_version
-    py_version=$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
-    if python3 -c "import sys; sys.exit(0 if sys.version_info >= (3, 9) else 1)" 2>/dev/null; then
+    py_version=$(python -c 'import sys; print("%d.%d" % sys.version_info[:2])')
+    if python -c "import sys; sys.exit(0 if sys.version_info >= (3, 9) else 1)" 2>/dev/null; then
         : # ok
     else
         echo "ERROR: Python 3.9+ required, found $py_version" >&2
@@ -294,7 +294,7 @@ run_installer() {
         cmd_args+=(--source "$REPO_DIR")
     fi
 
-    python3 "$REPO_DIR/install.py" "${cmd_args[@]}"
+    python "$REPO_DIR/install.py" "${cmd_args[@]}"
 }
 
 # -- Main --------------------------------------------------------------------

@@ -154,7 +154,7 @@ def get_mode_script_path(script_name: str) -> str:
         script_name: Script path relative to planner/ (e.g., "qr/plan-docs.py")
 
     Returns:
-        Module path for python3 -m (e.g., "skills.planner.qr.plan_docs")
+        Module path for python -m (e.g., "skills.planner.qr.plan_docs")
     """
     # Convert path to module: "qr/plan-docs.py" -> "qr.plan_docs"
     module = script_name.replace("/", ".").replace("-", "_").removesuffix(".py")

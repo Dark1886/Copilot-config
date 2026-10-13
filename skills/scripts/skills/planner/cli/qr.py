@@ -1,6 +1,6 @@
 """CLI for atomic QR state mutation with file locking.
 
-Usage: python3 -m skills.planner.cli.qr --state-dir <dir> --qr-phase <phase> <command> [args]
+Usage: python -m skills.planner.cli.qr --state-dir <dir> --qr-phase <phase> <command> [args]
 
 Commands:
   update-item <id> --status <PASS|FAIL> [--finding <text>] [--severity <MUST|SHOULD|COULD>]
@@ -356,7 +356,7 @@ def cli(args: list[str] = None):
         args = sys.argv[1:]
 
     if not args:
-        print("Usage: python3 -m skills.planner.cli.qr --state-dir <dir> --qr-phase <phase> <command> [args]")
+        print("Usage: python -m skills.planner.cli.qr --state-dir <dir> --qr-phase <phase> <command> [args]")
         print("")
         print("Global options:")
         print("  --state-dir <dir>   State directory (required)")

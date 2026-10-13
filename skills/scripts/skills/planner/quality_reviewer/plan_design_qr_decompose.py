@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """QR decomposition for plan-design phase.
 
 Scope: Plan structure and decision quality.

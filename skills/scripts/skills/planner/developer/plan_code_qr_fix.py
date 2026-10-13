@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """Plan code QR fix - targeted repair workflow.
 
 3-step workflow for developer sub-agent in fix mode:
@@ -95,7 +95,7 @@ def get_step_guidance(
                 "  - Do NOT change unrelated diffs",
                 "  - Focus ONLY on addressing the specific failures",
             ],
-            "next": f"python3 -m {MODULE_PATH} --step 2 --state-dir {state_dir}",
+            "next": f"python -m {MODULE_PATH} --step 2 --state-dir {state_dir}",
         }
 
     elif step == 2:
@@ -113,13 +113,13 @@ def get_step_guidance(
                 "    - Read actual file content",
                 "    - Update diff with correct context lines",
                 "    - Update via CLI with --version (get version from list-changes):",
-                "      python3 -m skills.planner.cli.plan --state-dir $STATE_DIR set-change \\",
+                "      python -m skills.planner.cli.plan --state-dir $STATE_DIR set-change \\",
                 "        --id CC-M-001-001 --version 1 --milestone M-001 \\",
                 "        --diff $'--- a/path/to/file.py\\n+++ b/path/to/file.py\\n...'",
                 "",
                 "BATCH MODE (preferred - reduces process invocations):",
                 "",
-                "  python3 -m skills.planner.cli.plan --state-dir $STATE_DIR batch '[",
+                "  python -m skills.planner.cli.plan --state-dir $STATE_DIR batch '[",
                 "    {\"method\": \"set-change\", \"params\": {\"id\": \"CC-M-001-001\", \"version\": 1, \"milestone\": \"M-001\", \"diff\": \"--- a/src/a.py\\n+++ b/src/a.py\\n...\"}, \"id\": 1},",
                 "    {\"method\": \"set-change\", \"params\": {\"id\": \"CC-M-001-002\", \"version\": 1, \"milestone\": \"M-001\", \"diff\": \"--- a/src/b.py\\n+++ b/src/b.py\\n...\"}, \"id\": 2}",
                 "  ]'",
@@ -146,7 +146,7 @@ def get_step_guidance(
                 "",
                 "CONSTRAINT: Fix ONLY the failing items. Don't refactor passing items.",
             ],
-            "next": f"python3 -m {MODULE_PATH} --step 3 --state-dir {state_dir}",
+            "next": f"python -m {MODULE_PATH} --step 3 --state-dir {state_dir}",
         }
 
     elif step == 3:
@@ -156,7 +156,7 @@ def get_step_guidance(
                 "VALIDATE your fixes before returning to orchestrator.",
                 "",
                 "Run structural validation:",
-                f"  python3 -m skills.planner.cli.plan validate --phase plan-code --state-dir {state_dir}",
+                f"  python -m skills.planner.cli.plan validate --phase plan-code --state-dir {state_dir}",
                 "",
                 "SELF-CHECK each fixed item:",
                 "  For each FAIL item you addressed:",

@@ -10,7 +10,7 @@ workflow.
 
 ## Invocation
 
-<invoke working-dir="{{SKILLS_DIR}}" cmd="python3 -m skills.decision_critic.decision_critic --step 1 --decision '<decision text>'" />
+<invoke working-dir="{{SKILLS_DIR}}" cmd="python -m skills.decision_critic.decision_critic --step 1 --decision '<decision text>'" />
 
 | Argument     | Required | Description                             |
 | ------------ | -------- | --------------------------------------- |

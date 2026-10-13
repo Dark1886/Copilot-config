@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """Plan design QR fix - targeted repair workflow.
 
 3-step workflow for architect sub-agent in fix mode:
@@ -85,7 +85,7 @@ def get_step_guidance(
                 "  - You MUST NOT write, modify, or append to context.json",
                 "  - Your fixes go to plan.json -- never context.json",
             ],
-            "next": f"python3 -m {MODULE_PATH} --step 2 --state-dir {state_dir}",
+            "next": f"python -m {MODULE_PATH} --step 2 --state-dir {state_dir}",
         }
 
     elif step == 2:
@@ -97,24 +97,24 @@ def get_step_guidance(
                 "SINGLE COMMAND EXAMPLES:",
                 "",
                 "Missing decision_log entry:",
-                "  python3 -m skills.planner.cli.plan --state-dir $STATE_DIR set-decision \\",
+                "  python -m skills.planner.cli.plan --state-dir $STATE_DIR set-decision \\",
                 "    --decision '<what was decided>' \\",
                 "    --reasoning '<premise -> implication -> conclusion>'",
                 "",
                 "Missing code_intent:",
-                "  python3 -m skills.planner.cli.plan --state-dir $STATE_DIR set-intent \\",
+                "  python -m skills.planner.cli.plan --state-dir $STATE_DIR set-intent \\",
                 "    --milestone <milestone-id> --file <path> \\",
                 "    --behavior '<what to implement>' \\",
                 "    --decision-refs '<DL-001,DL-002>'",
                 "",
                 "Updating existing intent (requires --version from current state):",
-                "  python3 -m skills.planner.cli.plan --state-dir $STATE_DIR set-intent \\",
+                "  python -m skills.planner.cli.plan --state-dir $STATE_DIR set-intent \\",
                 "    --id <intent-id> --version <current-version> \\",
                 "    --behavior '<updated description>'",
                 "",
                 "BATCH MODE (preferred - reduces process invocations):",
                 "",
-                "  python3 -m skills.planner.cli.plan --state-dir $STATE_DIR batch '[",
+                "  python -m skills.planner.cli.plan --state-dir $STATE_DIR batch '[",
                 "    {\"method\": \"set-decision\", \"params\": {\"decision\": \"Use polling\", \"reasoning\": \"30% webhook failures\"}, \"id\": 1},",
                 "    {\"method\": \"set-intent\", \"params\": {\"milestone\": \"M-001\", \"file\": \"src/a.py\", \"behavior\": \"Add handler\", \"decision_refs\": \"DL-001\"}, \"id\": 2},",
                 "    {\"method\": \"set-intent\", \"params\": {\"id\": \"CI-M-001-001\", \"version\": 1, \"behavior\": \"Updated description\"}, \"id\": 3}",
@@ -132,7 +132,7 @@ def get_step_guidance(
                 "",
                 "CONSTRAINT: Fix ONLY the failing items. Don't refactor passing items.",
             ],
-            "next": f"python3 -m {MODULE_PATH} --step 3 --state-dir {state_dir}",
+            "next": f"python -m {MODULE_PATH} --step 3 --state-dir {state_dir}",
         }
 
     elif step == 3:
@@ -142,7 +142,7 @@ def get_step_guidance(
                 "VALIDATE your fixes before returning to orchestrator.",
                 "",
                 "Run structural validation:",
-                "  python3 -m skills.planner.cli.plan validate --phase plan-design --state-dir {state_dir}",
+                "  python -m skills.planner.cli.plan validate --phase plan-design --state-dir {state_dir}",
                 "",
                 "SELF-CHECK each fixed item:",
                 "  For each FAIL item you addressed:",

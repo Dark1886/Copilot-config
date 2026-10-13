@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """
 Leon Writing Style - Multi-turn prompt injection for style compliance.
 
@@ -1080,7 +1080,7 @@ CRITICAL: All script outputs use XML format. You MUST:
     if is_complete or "COMPLETE" in next_text.upper():
         parts.append("WORKFLOW COMPLETE - Deliver final content.")
     else:
-        next_cmd = f'python3 -m skills.leon_writing_style.writing_style --step-number {step + 1} --thoughts \\"<accumulated>\\"'
+        next_cmd = f'python -m skills.leon_writing_style.writing_style --step-number {step + 1} --thoughts \\"<accumulated>\\"'
         parts.append(render_invoke_after(InvokeAfterNode(cmd=next_cmd)))
 
     return "\n".join(parts)

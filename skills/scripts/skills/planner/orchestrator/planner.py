@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """
 Interactive Sequential Planner - Orchestrator with parallel QR verification.
 
@@ -95,7 +95,7 @@ def _build_fix_mode_output(title, agent, agent_role, script, mode_total_steps, q
     action_children.append("")
 
     mode_script = get_mode_script_path(script)
-    invoke_cmd = f"python3 -m {mode_script} --step 1 --state-dir {state_dir}"
+    invoke_cmd = f"python -m {mode_script} --step 1 --state-dir {state_dir}"
 
     dispatch_prompt = subagent_dispatch(
         agent_type=agent,
@@ -107,7 +107,7 @@ def _build_fix_mode_output(title, agent, agent_role, script, mode_total_steps, q
     action_children.append("After fixes complete, re-run QR for fresh verification.")
 
     next_step = ctx["step"] + 1
-    next_cmd = f"python3 -m {MODULE_PATH} --step {next_step} --state-dir {state_dir}"
+    next_cmd = f"python -m {MODULE_PATH} --step {next_step} --state-dir {state_dir}"
 
     return {
         "title": f"{title} - Fix Mode",
@@ -153,7 +153,7 @@ def init_step(title, actions):
         return {
             "title": title,
             "actions": actions,
-            "next": f"python3 -m {MODULE_PATH} --step 2 --state-dir {state_dir}",
+            "next": f"python -m {MODULE_PATH} --step 2 --state-dir {state_dir}",
         }
 
     return handler
@@ -171,7 +171,7 @@ def verify_step(title, actions):
         return {
             "title": title,
             "actions": actions,
-            "next": f"python3 -m {MODULE_PATH} --step 3 --state-dir {state_dir}",
+            "next": f"python -m {MODULE_PATH} --step 3 --state-dir {state_dir}",
         }
 
     return handler
@@ -197,7 +197,7 @@ def execute_dispatch_step(title, agent, agent_role, script, mode_total_steps, po
         action_children.append("")
 
         mode_script = get_mode_script_path(script)
-        invoke_cmd = f"python3 -m {mode_script} --step 1 --state-dir {state_dir}"
+        invoke_cmd = f"python -m {mode_script} --step 1 --state-dir {state_dir}"
 
         dispatch_prompt = subagent_dispatch(
             agent_type=agent,
@@ -210,7 +210,7 @@ def execute_dispatch_step(title, agent, agent_role, script, mode_total_steps, po
             action_children.extend(post_dispatch)
 
         next_step = step + 1
-        next_cmd = f"python3 -m {MODULE_PATH} --step {next_step} --state-dir {state_dir}"
+        next_cmd = f"python -m {MODULE_PATH} --step {next_step} --state-dir {state_dir}"
 
         return {
             "title": title,
@@ -244,7 +244,7 @@ def qr_decompose_step(title, phase, script, model=None):
                     f"QR items for {phase} already defined.",
                     "Proceeding to verification of existing items.",
                 ],
-                "next": f"python3 -m {MODULE_PATH} --step {verify_step} --state-dir {state_dir}",
+                "next": f"python -m {MODULE_PATH} --step {verify_step} --state-dir {state_dir}",
             }
 
         action_children = []
@@ -257,7 +257,7 @@ def qr_decompose_step(title, phase, script, model=None):
         action_children.append("")
 
         mode_script = get_mode_script_path(script)
-        invoke_cmd = f"python3 -m {mode_script} --step 1 --state-dir {state_dir}"
+        invoke_cmd = f"python -m {mode_script} --step 1 --state-dir {state_dir}"
 
         dispatch_prompt = subagent_dispatch(
             agent_type="quality-reviewer",
@@ -271,7 +271,7 @@ def qr_decompose_step(title, phase, script, model=None):
         action_children.append("Orchestrator generates verification dispatch from this file.")
 
         next_step = step + 1
-        next_cmd = f"python3 -m {MODULE_PATH} --step {next_step} --state-dir {state_dir}"
+        next_cmd = f"python -m {MODULE_PATH} --step {next_step} --state-dir {state_dir}"
 
         return {
             "title": title,
@@ -322,8 +322,8 @@ def qr_verify_step(title, phase):
             return {
                 "title": title,
                 "actions": ["All items already verified. Proceeding with pass."],
-                "if_pass": f"python3 -m {MODULE_PATH} --step {next_step} --state-dir {state_dir} --qr-status pass",
-                "if_fail": f"python3 -m {MODULE_PATH} --step {next_step} --state-dir {state_dir} --qr-status pass",
+                "if_pass": f"python -m {MODULE_PATH} --step {next_step} --state-dir {state_dir} --qr-status pass",
+                "if_fail": f"python -m {MODULE_PATH} --step {next_step} --state-dir {state_dir} --qr-status pass",
             }
 
         config = get_phase_config(phase)
@@ -350,9 +350,9 @@ def qr_verify_step(title, phase):
 Items: $item_ids
 Checks: $checks_summary
 
-Start: python3 -m {verify_script} --step 1 --state-dir {state_dir} $qr_item_flags"""
+Start: python -m {verify_script} --step 1 --state-dir {state_dir} $qr_item_flags"""
 
-        command = f"python3 -m {verify_script} --step 1 --state-dir {state_dir} $qr_item_flags"
+        command = f"python -m {verify_script} --step 1 --state-dir {state_dir} $qr_item_flags"
 
         dispatch_text = template_dispatch(
             agent_type="quality-reviewer",
@@ -388,7 +388,7 @@ Start: python3 -m {verify_script} --step 1 --state-dir {state_dir} $qr_item_flag
         ]
 
         next_step = step + 1
-        base_cmd = f"python3 -m {MODULE_PATH} --step {next_step} --state-dir {state_dir}"
+        base_cmd = f"python -m {MODULE_PATH} --step {next_step} --state-dir {state_dir}"
 
         return {
             "title": title,

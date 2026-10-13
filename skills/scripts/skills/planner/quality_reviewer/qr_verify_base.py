@@ -176,7 +176,7 @@ class VerifyBase(ABC):
                 "Note the scope: '*' means macro check, 'file:path:lines' means specific location.",
                 "Severity indicates blocking behavior: MUST blocks all iterations, SHOULD blocks 1-4.",
             ],
-            "next": f"python3 -m {module_path} --step 2{state_dir_arg} {item_flags}",
+            "next": f"python -m {module_path} --step 2{state_dir_arg} {item_flags}",
         }
 
     def _step_analyze(self, state_dir: str, module_path: str, item_ids: list[str], item_idx: int, total_steps: int) -> dict:
@@ -225,7 +225,7 @@ class VerifyBase(ABC):
                 "",
                 "DO NOT update qr state yet. Proceed to CONFIRM step.",
             ],
-            "next": f"python3 -m {module_path} --step {current_step + 1}{state_dir_arg} {item_flags}",
+            "next": f"python -m {module_path} --step {current_step + 1}{state_dir_arg} {item_flags}",
         }
 
     def _step_confirm(self, state_dir: str, module_path: str, item_ids: list[str], item_idx: int, total_steps: int) -> dict:
@@ -243,10 +243,10 @@ class VerifyBase(ABC):
         next_step = current_step + 1
         if item_idx + 1 < len(item_ids):
             # More items to process
-            next_action = f"python3 -m {module_path} --step {next_step}{state_dir_arg} {item_flags}"
+            next_action = f"python -m {module_path} --step {next_step}{state_dir_arg} {item_flags}"
         else:
             # This was the last item, proceed to SUMMARY
-            next_action = f"python3 -m {module_path} --step {next_step}{state_dir_arg} {item_flags}"
+            next_action = f"python -m {module_path} --step {next_step}{state_dir_arg} {item_flags}"
 
         return {
             "title": f"QR Verify Step {current_step}/{total_steps}: Confirm {item_id} ({self.PHASE})",
@@ -262,11 +262,11 @@ class VerifyBase(ABC):
                 "RECORD RESULT via CLI:",
                 "",
                 "If PASS:",
-                f"  python3 -m {CLI_MODULE} --state-dir {state_dir} --qr-phase {self.PHASE} \\",
+                f"  python -m {CLI_MODULE} --state-dir {state_dir} --qr-phase {self.PHASE} \\",
                 f"    update-item {item_id} --status PASS",
                 "",
                 "If FAIL:",
-                f"  python3 -m {CLI_MODULE} --state-dir {state_dir} --qr-phase {self.PHASE} \\",
+                f"  python -m {CLI_MODULE} --state-dir {state_dir} --qr-phase {self.PHASE} \\",
                 f"    update-item {item_id} --status FAIL --finding '<one-line explanation>'",
                 "",
                 "Execute ONE of the above commands, then proceed.",

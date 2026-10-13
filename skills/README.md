@@ -372,7 +372,7 @@ def format_dispatch_step(agent_type: str, invoke_cmd: str, state_dir: str) -> st
         + dispatch
     )
 
-    next_step_cmd = "python3 -m skills.planner.orchestrator.planner --step N --state-dir " + state_dir
+    next_step_cmd = "python -m skills.planner.orchestrator.planner --step N --state-dir " + state_dir
     return format_step(body, next_step_cmd)
 ```
 
@@ -398,7 +398,7 @@ def format_technique_step(categories: list[str]) -> str:
         "..."
     )
 
-    return format_step(body, "python3 -m skills.prompt_engineer.optimize --step 5")
+    return format_step(body, "python -m skills.prompt_engineer.optimize --step 5")
 ```
 
 ### Pattern 5: Hybrid Static/Dynamic Steps (deepthink)

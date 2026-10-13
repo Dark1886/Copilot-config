@@ -259,7 +259,7 @@ After decomposition creates the initial qr-{phase}.json file, all subsequent mut
 **CLI interface:**
 
 ```
-python3 -m skills.planner.cli.qr --state-dir <dir> --qr-phase <phase> update-item <id> --status <status> [--finding <text>]
+python -m skills.planner.cli.qr --state-dir <dir> --qr-phase <phase> update-item <id> --status <status> [--finding <text>]
 
 Arguments:
   --state-dir    State directory containing qr-{phase}.json (required)
@@ -272,11 +272,11 @@ Arguments:
 
 ```bash
 # Verify agent marks item as PASS
-python3 -m skills.planner.cli.qr --state-dir /tmp/state --qr-phase plan-design \
+python -m skills.planner.cli.qr --state-dir /tmp/state --qr-phase plan-design \
     update-item qa-001 --status PASS
 
 # Verify agent marks item as FAIL
-python3 -m skills.planner.cli.qr --state-dir /tmp/state --qr-phase plan-design \
+python -m skills.planner.cli.qr --state-dir /tmp/state --qr-phase plan-design \
     update-item qa-003 --status FAIL --finding "Missing null check in validate_token()"
 ```
 
@@ -332,10 +332,10 @@ Each versionable entity has a `version: int` field starting at 1. Updates requir
 **CLI interface:**
 
 ```
-python3 -m skills.planner.cli.plan --state-dir <dir> set-intent \
+python -m skills.planner.cli.plan --state-dir <dir> set-intent \
     --milestone M-001 --file path.py --behavior "description"    # create
 
-python3 -m skills.planner.cli.plan --state-dir <dir> set-intent \
+python -m skills.planner.cli.plan --state-dir <dir> set-intent \
     --id CI-M-001-001 --version 1 --behavior "updated"           # update
 ```
 
@@ -846,7 +846,7 @@ Rendered format:
     <group id="umbrella" items="qa-010,qa-011">Cross-cutting checks</group>
   </groups>
   <template>
-    <invoke cmd="python3 -m skills.planner.quality_reviewer.{phase}_qr_verify --step 1 --state-dir {state_dir} --qr-items $GROUP_ITEMS" />
+    <invoke cmd="python -m skills.planner.quality_reviewer.{phase}_qr_verify --step 1 --state-dir {state_dir} --qr-items $GROUP_ITEMS" />
   </template>
 </parallel_dispatch>
 ```
@@ -862,7 +862,7 @@ Each QR block consists of 4 orchestrator steps:
 **Decompose step (1 sub-agent):**
 
 ```
-python3 -m skills.planner.quality_reviewer.<phase>_qr_decompose --step 1 --state-dir {state_dir}
+python -m skills.planner.quality_reviewer.<phase>_qr_decompose --step 1 --state-dir {state_dir}
 ```
 
 Sub-agent explores the artifact being reviewed using an 8-step cognitive workflow, generates verification items adaptively (quantity determined by content, not preset bounds), writes qr-{phase}.json with all items status: TODO. Outputs parallel_dispatch block for orchestrator to parse.
@@ -921,7 +921,7 @@ More items with overlap is preferred over fewer items with gaps.
 **Verify step (N sub-agents, parallel):**
 
 ```
-python3 -m skills.planner.quality_reviewer.<phase>_qr_verify --step 1 --state-dir {state_dir} --qr-items qa-001,qa-002
+python -m skills.planner.quality_reviewer.<phase>_qr_verify --step 1 --state-dir {state_dir} --qr-items qa-001,qa-002
 ```
 
 Each sub-agent receives a batch of semantically related items to verify. Items are grouped by the decompose step (e.g., by component, by concern, or parent-child relationships). The agent reads the qr file, verifies each assigned item, and updates status to PASS or FAIL with finding.
@@ -987,7 +987,7 @@ Example prompt fragment for architect:
 
 ```
 State Mutation:
-  python3 -m skills.planner.cli.plan --state-dir {state_dir} set-intent \
+  python -m skills.planner.cli.plan --state-dir {state_dir} set-intent \
       --milestone M-001 --file path.py --behavior "description"
 ```
 

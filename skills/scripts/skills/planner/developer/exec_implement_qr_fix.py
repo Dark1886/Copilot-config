@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """Impl code QR fix - targeted repair workflow.
 
 3-step workflow for developer sub-agent in fix mode:
@@ -71,7 +71,7 @@ def get_step_guidance(
                 "  - Do NOT refactor unrelated code",
                 "  - Focus ONLY on addressing the specific failures",
             ],
-            "next": f"python3 -m {MODULE_PATH} --step 2 --state-dir {state_dir}",
+            "next": f"python -m {MODULE_PATH} --step 2 --state-dir {state_dir}",
         }
 
     elif step == 2:
@@ -97,7 +97,7 @@ def get_step_guidance(
                 "",
                 "CONSTRAINT: Fix ONLY the failing items. Don't refactor passing code.",
             ],
-            "next": f"python3 -m {MODULE_PATH} --step 3 --state-dir {state_dir}",
+            "next": f"python -m {MODULE_PATH} --step 3 --state-dir {state_dir}",
         }
 
     elif step == 3:

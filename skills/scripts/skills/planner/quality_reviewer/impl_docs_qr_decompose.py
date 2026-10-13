@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """QR decomposition for impl-docs phase.
 
 Scope: Post-implementation documentation.

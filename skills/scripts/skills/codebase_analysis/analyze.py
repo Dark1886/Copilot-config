@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """
 Codebase Analysis Skill - Understanding-focused comprehension workflow.
 
@@ -206,7 +206,7 @@ def build_survey_body() -> str:
     2. Generates 2-5 focus areas
     3. Dispatches agents in parallel with actual script invocation
     """
-    invoke_cmd = f'python3 -m {SUBAGENT_MODULE_PATH} --step 1'
+    invoke_cmd = f'python -m {SUBAGENT_MODULE_PATH} --step 1'
 
     dispatch_text = roster_dispatch(
         agent_type="exploration (file search, code reading, pattern matching)",
@@ -235,7 +235,7 @@ _SURVEY_BODY = build_survey_body()
 
 def build_next_command(step: int, confidence: str, iteration: int) -> str | None:
     """Build the invoke command for the next step."""
-    base_cmd = f'python3 -m {MODULE_PATH}'
+    base_cmd = f'python -m {MODULE_PATH}'
 
     if step == 1:
         return f'{base_cmd} --step 2'

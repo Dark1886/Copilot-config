@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """
 QR Reconciliation - Step-based workflow for quality-reviewer agent.
 
@@ -52,7 +52,7 @@ def step_1_handler(step_info, total_steps, module_path, **kwargs):
             "  - Code may exist but not meet criteria (done wrong)",
             "  - Criteria may be met by different code than planned (done differently but correctly)",
         ],
-        "next": f"python3 -m {module_path} --step 2 --milestone {milestone}",
+        "next": f"python -m {module_path} --step 2 --milestone {milestone}",
     }
 
 
@@ -79,7 +79,7 @@ def step_2_handler(step_info, total_steps, module_path, **kwargs):
             "NOTE: If milestone has no explicit acceptance criteria,",
             "infer testable criteria from the milestone description.",
         ],
-        "next": f"python3 -m {module_path} --step 3 --milestone {milestone}",
+        "next": f"python -m {module_path} --step 3 --milestone {milestone}",
     }
 
 
@@ -121,7 +121,7 @@ GOOD (neutral): "What synchronization primitive is used?" -> discovers reality
             "  - Code may exist but not satisfy the criterion",
             "  - Different implementation can satisfy same requirement",
         ],
-        "next": f"python3 -m {module_path} --step 4 --milestone {milestone}",
+        "next": f"python -m {module_path} --step 4 --milestone {milestone}",
     }
 
 

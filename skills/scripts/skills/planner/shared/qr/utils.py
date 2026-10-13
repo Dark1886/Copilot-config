@@ -222,10 +222,10 @@ def format_qr_result(workflow: str, phase: str, passed: bool, state_dir: str) ->
 
     if passed:
         return f"""RESULT: PASS
-invoke_after: python3 -m {module_path} --step {gate_step} --state-dir {state_dir} --qr-status pass"""
+invoke_after: python -m {module_path} --step {gate_step} --state-dir {state_dir} --qr-status pass"""
     else:
         return f"""RESULT: FAIL
-invoke_after: python3 -m {module_path} --step {gate_step} --state-dir {state_dir} --qr-status fail"""
+invoke_after: python -m {module_path} --step {gate_step} --state-dir {state_dir} --qr-status fail"""
 
 
 def get_qr_iteration(state_dir: str, phase: str) -> int:

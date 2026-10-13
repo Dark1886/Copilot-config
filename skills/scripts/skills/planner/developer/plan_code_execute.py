@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """Plan code execution - first-time code filling workflow.
 
 4-step workflow for developer sub-agent:
@@ -80,21 +80,21 @@ def get_step_guidance(
                 "FORBIDDEN: Edit tool. You are planning, not implementing.",
                 "",
                 "CLI COMMANDS (single invocation):",
-                "  python3 -m skills.planner.cli.plan --state-dir $STATE_DIR list-milestones",
-                "  python3 -m skills.planner.cli.plan --state-dir $STATE_DIR list-intents M-001",
-                "  python3 -m skills.planner.cli.plan --state-dir $STATE_DIR set-change \\",
+                "  python -m skills.planner.cli.plan --state-dir $STATE_DIR list-milestones",
+                "  python -m skills.planner.cli.plan --state-dir $STATE_DIR list-intents M-001",
+                "  python -m skills.planner.cli.plan --state-dir $STATE_DIR set-change \\",
                 "    --milestone M-001 --intent-ref CI-M-001-001 --file path.py --diff $'...'",
                 "",
                 "BATCH MODE (preferred for multiple changes):",
                 "",
-                "  python3 -m skills.planner.cli.plan --state-dir $STATE_DIR batch '[",
+                "  python -m skills.planner.cli.plan --state-dir $STATE_DIR batch '[",
                 "    {\"method\": \"set-change\", \"params\": {\"milestone\": \"M-001\", \"intent_ref\": \"CI-M-001-001\", \"file\": \"src/a.py\", \"diff\": \"...\"}, \"id\": 1},",
                 "    {\"method\": \"set-change\", \"params\": {\"milestone\": \"M-001\", \"intent_ref\": \"CI-M-001-002\", \"file\": \"src/b.py\", \"diff\": \"...\"}, \"id\": 2}",
                 "  ]'",
                 "",
                 "Read plan.json now. List milestones and code_intents.",
             ],
-            "next": f"python3 -m {MODULE_PATH} --step 2 --state-dir {state_dir}",
+            "next": f"python -m {MODULE_PATH} --step 2 --state-dir {state_dir}",
         }
 
     elif step == 2:
@@ -123,7 +123,7 @@ def get_step_guidance(
                 "SKIP PATTERN: If milestone only touches .md/.rst/.txt files,",
                 "mark as documentation-only (no code_changes needed).",
             ],
-            "next": f"python3 -m {MODULE_PATH} --step 3{state_dir_arg}",
+            "next": f"python -m {MODULE_PATH} --step 3{state_dir_arg}",
         }
 
     elif step == 3:
@@ -142,13 +142,13 @@ def get_step_guidance(
                 "",
                 "WORKFLOW:",
                 "  1. Compose diff text following format above",
-                "  2. Bash tool: python3 -m skills.planner.cli.plan set-change ... --diff $'...'",
+                "  2. Bash tool: python -m skills.planner.cli.plan set-change ... --diff $'...'",
                 "",
                 "STOP CHECK: If you are about to use Edit on a source file, STOP.",
                 "That means you are implementing, not planning. Return to step 1.",
                 "",
                 "DIFF EXAMPLE:",
-                "     python3 -m skills.planner.cli.plan --state-dir $STATE_DIR set-change \\",
+                "     python -m skills.planner.cli.plan --state-dir $STATE_DIR set-change \\",
                 "       --milestone M-001 --intent-ref CI-M-001-001 \\",
                 "       --file path/to/file.py \\",
                 "       --diff $'--- a/path/to/file.py\\n+++ b/path/to/file.py\\n@@ -123,6 +123,15 @@ def existing_function(ctx):\\n     context_line_before()\\n+   new_code()\\n     context_line_after()'",
@@ -173,7 +173,7 @@ def get_step_guidance(
                 "CRITICAL: Each code_change MUST have valid intent_ref.",
                 "  CLI validates: intent_ref must exist in code_intents[].",
             ],
-            "next": f"python3 -m {MODULE_PATH} --step 4{state_dir_arg}",
+            "next": f"python -m {MODULE_PATH} --step 4{state_dir_arg}",
         }
 
     elif step == 4:
@@ -182,7 +182,7 @@ def get_step_guidance(
             "actions": [
                 "VALIDATE plan.json using CLI:",
                 "",
-                "  python3 -m skills.planner.cli.plan validate --phase plan-code",
+                "  python -m skills.planner.cli.plan validate --phase plan-code",
                 "",
                 "This validates:",
                 "  - Every code_intent has matching code_change with valid intent_ref",

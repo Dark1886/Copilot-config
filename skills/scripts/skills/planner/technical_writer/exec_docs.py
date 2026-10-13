@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """Exec Docs - Router script that dispatches to execute or fix.
 
 This is a THIN router. The routing logic lives in shared/routing.py.
@@ -42,7 +42,7 @@ def get_step_guidance(
                 "Dispatching to EXECUTE workflow.",
             ],
             "dispatch_to": target,
-            "next": f"python3 -m {target} --step 1",
+            "next": f"python -m {target} --step 1",
         }
 
     # Check fix mode via file state inspection
@@ -56,7 +56,7 @@ def get_step_guidance(
                 "Dispatching to FIX workflow.",
             ],
             "dispatch_to": target,
-            "next": f"python3 -m {target} --step 1 --state-dir {state_dir}",
+            "next": f"python -m {target} --step 1 --state-dir {state_dir}",
         }
 
     # Use routing module for state-based detection
@@ -71,7 +71,7 @@ def get_step_guidance(
                 "Dispatching to FIX workflow.",
             ],
             "dispatch_to": result["target_module"],
-            "next": f"python3 -m {result['target_module']} --step 1 --state-dir {state_dir}",
+            "next": f"python -m {result['target_module']} --step 1 --state-dir {state_dir}",
         }
     else:
         return {
@@ -81,7 +81,7 @@ def get_step_guidance(
                 "Dispatching to EXECUTE workflow.",
             ],
             "dispatch_to": result["target_module"],
-            "next": f"python3 -m {result['target_module']} --step 1 --state-dir {state_dir}",
+            "next": f"python -m {result['target_module']} --step 1 --state-dir {state_dir}",
         }
 
 

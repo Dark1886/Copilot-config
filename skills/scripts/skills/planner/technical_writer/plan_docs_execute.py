@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """Plan docs execution - first-time documentation workflow.
 
 6-step workflow for technical-writer sub-agent:
@@ -91,15 +91,15 @@ def get_step_guidance(
             "CLI COMMANDS:",
             "",
             "  # Set doc_diff for existing code_change:",
-            "  python3 -m skills.planner.cli.plan --state-dir $STATE_DIR set-doc-diff \\",
+            "  python -m skills.planner.cli.plan --state-dir $STATE_DIR set-doc-diff \\",
             "    --change CC-M-001-001 --version 1 --content-file /tmp/doc.diff",
             "",
             "  # Create documentation-only change (README, etc.):",
-            "  python3 -m skills.planner.cli.plan --state-dir $STATE_DIR create-doc-change \\",
+            "  python -m skills.planner.cli.plan --state-dir $STATE_DIR create-doc-change \\",
             "    --milestone M-001 --file path/README.md --content-file /tmp/readme.diff",
             "",
             "BATCH MODE:",
-            "  python3 -m skills.planner.cli.plan --state-dir $STATE_DIR batch '[",
+            "  python -m skills.planner.cli.plan --state-dir $STATE_DIR batch '[",
             "    {\"method\": \"set-doc-diff\", \"params\": {\"change\": \"CC-M-001-001\", \"version\": 1, \"content_file\": \"/tmp/d1.diff\"}, \"id\": 1},",
             "    {\"method\": \"create-doc-change\", \"params\": {\"milestone\": \"M-001\", \"file\": \"README.md\", \"content_file\": \"/tmp/r.diff\"}, \"id\": 2}",
             "  ]'",
@@ -113,7 +113,7 @@ def get_step_guidance(
         return {
             "title": STEPS[1],
             "actions": actions,
-            "next": f"python3 -m {MODULE_PATH} --step 2 --state-dir {state_dir}",
+            "next": f"python -m {MODULE_PATH} --step 2 --state-dir {state_dir}",
         }
 
     elif step == 2:
@@ -141,7 +141,7 @@ def get_step_guidance(
                 "   - How the design addresses each risk",
                 "",
                 "List decision IDs for reference:",
-                "  python3 -m skills.planner.cli.plan list-decisions",
+                "  python -m skills.planner.cli.plan list-decisions",
                 "",
                 "Write out your CONTEXT SUMMARY before proceeding:",
                 "  CONTEXT SUMMARY:",
@@ -153,7 +153,7 @@ def get_step_guidance(
                 "These decision IDs are your SOURCE for WHY comments.",
                 "Comments you add MUST reference these decision_refs.",
             ],
-            "next": f"python3 -m {MODULE_PATH} --step 3{state_dir_arg}",
+            "next": f"python -m {MODULE_PATH} --step 3{state_dir_arg}",
         }
 
     elif step == 3:
@@ -181,7 +181,7 @@ def get_step_guidance(
                 "",
                 "This analysis drives Step 4.",
             ],
-            "next": f"python3 -m {MODULE_PATH} --step 4{state_dir_arg}",
+            "next": f"python -m {MODULE_PATH} --step 4{state_dir_arg}",
         }
 
     elif step == 4:
@@ -217,14 +217,14 @@ def get_step_guidance(
                 "   existing_line",
                 "  EOF",
                 "",
-                "  python3 -m skills.planner.cli.plan --state-dir $STATE_DIR set-doc-diff \\",
+                "  python -m skills.planner.cli.plan --state-dir $STATE_DIR set-doc-diff \\",
                 "    --change CC-M-001-001 --version 1 --content-file /tmp/doc.diff",
                 "",
                 "TEMPORAL CONTAMINATION CHECK before writing:",
                 "  - BAD: 'Added to support...', 'Now uses...', 'Changed from...'",
                 "  - GOOD: Timeless present tense describing what IS",
             ],
-            "next": f"python3 -m {MODULE_PATH} --step 5{state_dir_arg}",
+            "next": f"python -m {MODULE_PATH} --step 5{state_dir_arg}",
         }
 
     elif step == 5:
@@ -264,7 +264,7 @@ def get_step_guidance(
                 "  +# Content here...",
                 "  EOF",
                 "",
-                "  python3 -m skills.planner.cli.plan --state-dir $STATE_DIR create-doc-change \\",
+                "  python -m skills.planner.cli.plan --state-dir $STATE_DIR create-doc-change \\",
                 "    --milestone M-002 --file internal/rules/README.md \\",
                 "    --content-file /tmp/readme.diff",
                 "",
@@ -272,7 +272,7 @@ def get_step_guidance(
                 "  - If YES: skip (redundant)",
                 "  - If NO: include (invisible knowledge)",
             ],
-            "next": f"python3 -m {MODULE_PATH} --step 6{state_dir_arg}",
+            "next": f"python -m {MODULE_PATH} --step 6{state_dir_arg}",
         }
 
     elif step == 6:
@@ -282,7 +282,7 @@ def get_step_guidance(
                 "FINAL VALIDATION",
                 "",
                 "Run validation:",
-                f"  python3 -m skills.planner.cli.plan validate --phase plan-docs --state-dir {state_dir}",
+                f"  python -m skills.planner.cli.plan validate --phase plan-docs --state-dir {state_dir}",
                 "",
                 "VERIFY each code_change:",
                 "  [ ] Has doc_diff if it has diff (code changes need documentation)",

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """Plan design execution - first-time creation workflow.
 
 6-step workflow for architect sub-agent:
@@ -90,7 +90,7 @@ def get_step_guidance(
                 "DO NOT write any files yet. Gather understanding for step 2.",
                 "Record your analysis mentally for use in subsequent steps.",
             ],
-            "next": f"python3 -m {MODULE_PATH} --step 2 --state-dir {state_dir}",
+            "next": f"python -m {MODULE_PATH} --step 2 --state-dir {state_dir}",
         }
 
     elif step == 2:
@@ -116,7 +116,7 @@ def get_step_guidance(
                 "",
                 "Record discoveries for use in steps 4-6. Do NOT write files.",
             ],
-            "next": f"python3 -m {MODULE_PATH} --step 3{state_dir_arg}",
+            "next": f"python -m {MODULE_PATH} --step 3{state_dir_arg}",
         }
 
     elif step == 3:
@@ -137,7 +137,7 @@ def get_step_guidance(
                 "Record confirmed strategy for use in step 6.",
                 "Decisions will be recorded via CLI in step 6.",
             ],
-            "next": f"python3 -m {MODULE_PATH} --step 4{state_dir_arg}",
+            "next": f"python -m {MODULE_PATH} --step 4{state_dir_arg}",
         }
 
     elif step == 4:
@@ -160,7 +160,7 @@ def get_step_guidance(
                 "Use exploration findings from step 2 to ground tradeoffs.",
                 "Record approach analysis for step 6.",
             ],
-            "next": f"python3 -m {MODULE_PATH} --step 5{state_dir_arg}",
+            "next": f"python -m {MODULE_PATH} --step 5{state_dir_arg}",
         }
 
     elif step == 5:
@@ -186,7 +186,7 @@ def get_step_guidance(
                 "",
                 "Record assumptions and user answers for step 6.",
             ],
-            "next": f"python3 -m {MODULE_PATH} --step 6{state_dir_arg}",
+            "next": f"python -m {MODULE_PATH} --step 6{state_dir_arg}",
         }
 
     elif step == 6:
@@ -208,7 +208,7 @@ def get_step_guidance(
                 "",
                 "CLI COMMANDS (single invocation syntax):",
                 "",
-                "  python3 -m skills.planner.cli.plan --state-dir $STATE_DIR <command>",
+                "  python -m skills.planner.cli.plan --state-dir $STATE_DIR <command>",
                 "",
                 "  Commands:",
                 "    set-decision --decision '<what>' --reasoning '<premise->implication->conclusion>'",
@@ -219,7 +219,7 @@ def get_step_guidance(
                 "",
                 "JSON-RPC format: [{\"method\": \"...\", \"params\": {...}, \"id\": N}, ...]",
                 "",
-                "  python3 -m skills.planner.cli.plan --state-dir $STATE_DIR batch '[",
+                "  python -m skills.planner.cli.plan --state-dir $STATE_DIR batch '[",
                 "    {\"method\": \"set-decision\", \"params\": {\"decision\": \"Use polling\", \"reasoning\": \"30% webhook failures\"}, \"id\": 1},",
                 "    {\"method\": \"set-milestone\", \"params\": {\"name\": \"Auth stack\", \"files\": \"src/auth.py\"}, \"id\": 2},",
                 "    {\"method\": \"set-intent\", \"params\": {\"milestone\": \"M-001\", \"file\": \"src/auth.py\", \"behavior\": \"Add token validation\", \"decision_refs\": \"DL-001\"}, \"id\": 3}",
@@ -244,17 +244,17 @@ def get_step_guidance(
                 "CLI WORKFLOW:",
                 "",
                 "1. Create diagram:",
-                "   python3 -m skills.planner.cli.plan --state-dir $STATE_DIR set-diagram \\",
+                "   python -m skills.planner.cli.plan --state-dir $STATE_DIR set-diagram \\",
                 "     --type architecture --scope overview --title 'System Overview'",
                 "",
                 "2. Add nodes (3-7 recommended, prevents visual overload):",
-                "   python3 -m skills.planner.cli.plan --state-dir $STATE_DIR add-diagram-node \\",
+                "   python -m skills.planner.cli.plan --state-dir $STATE_DIR add-diagram-node \\",
                 "     --diagram DIAG-001 --node-id client --label 'Client' --type service",
-                "   python3 -m skills.planner.cli.plan --state-dir $STATE_DIR add-diagram-node \\",
+                "   python -m skills.planner.cli.plan --state-dir $STATE_DIR add-diagram-node \\",
                 "     --diagram DIAG-001 --node-id server --label 'Server' --type service",
                 "",
                 "3. Add edges (label every edge):",
-                "   python3 -m skills.planner.cli.plan --state-dir $STATE_DIR add-diagram-edge \\",
+                "   python -m skills.planner.cli.plan --state-dir $STATE_DIR add-diagram-edge \\",
                 "     --diagram DIAG-001 --source client --target server --label 'sends request' --protocol gRPC",
                 "",
                 "SCOPE VALUES:",
@@ -282,7 +282,7 @@ def get_step_guidance(
                 "  If file overlap: extract to M0 (foundation) or consolidate",
                 "",
                 "VALIDATION: After building plan.json, run:",
-                "  python3 -m skills.planner.cli.plan validate --phase plan-design",
+                "  python -m skills.planner.cli.plan validate --phase plan-design",
                 "",
                 "REFERENCE SCHEMA:",
                 "",

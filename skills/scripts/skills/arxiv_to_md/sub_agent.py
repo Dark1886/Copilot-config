@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """arxiv-to-md sub-agent: Convert a single arXiv paper to markdown.
 
 Arguments:
@@ -94,7 +94,7 @@ PREPROCESS_INSTRUCTIONS = (
     "Run TeX preprocessing via Bash tool:\n"
     "\n"
     "```bash\n"
-    "python3 << 'EOF'\n"
+    "python << 'EOF'\n"
     "import sys\n"
     f"sys.path.insert(0, {str(get_scripts_dir())!r})\n"
     "from skills.arxiv_to_md.tex_utils import preprocess_tex\n"
@@ -268,7 +268,7 @@ def build_next_command(step: int, arxiv_id: str, dest_file: str | None) -> str |
         return None
 
     cmd_parts = [
-        "python3 -m", MODULE_PATH,
+        "python -m", MODULE_PATH,
         f"--step {step + 1}",
         f"--arxiv-id {arxiv_id}"
     ]

@@ -1,6 +1,6 @@
 """CLI entrypoint for plan.json manipulation with CAS versioning.
 
-Usage: python3 -m skills.planner.cli.plan --state-dir <dir> <command> [args]
+Usage: python -m skills.planner.cli.plan --state-dir <dir> <command> [args]
 
 Role-based scope enforcement via PLAN_AGENT_ROLE env var.
 All writes are validated and atomic (write to .tmp, rename).
@@ -1342,7 +1342,7 @@ COMMANDS: list[type[Command]] = [
 def build_parser() -> argparse.ArgumentParser:
     """Build parser by iterating over command registry."""
     parser = argparse.ArgumentParser(
-        prog="python3 -m skills.planner.cli.plan",
+        prog="python -m skills.planner.cli.plan",
         description="CLI for plan.json manipulation with CAS versioning"
     )
     parser.add_argument("--state-dir", required=True, help="State directory containing plan.json")

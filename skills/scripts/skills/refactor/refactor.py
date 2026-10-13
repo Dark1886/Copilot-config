@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """
 Refactor Skill - Category-based code smell detection and synthesis.
 
@@ -232,10 +232,10 @@ def build_explore_dispatch(n: int = DEFAULT_CATEGORY_COUNT, mode_filter: str = "
 CATEGORY: $name
 MODE: $mode
 
-Start: <invoke working-dir=\"""" + _SKILLS_DIR + """\" cmd="python3 -m """ + EXPLORE_MODULE_PATH + """ --step 1 --category $ref --mode $mode""" + scope_arg + """" />"""
+Start: <invoke working-dir=\"""" + _SKILLS_DIR + """\" cmd="python -m """ + EXPLORE_MODULE_PATH + """ --step 1 --category $ref --mode $mode""" + scope_arg + """" />"""
 
     # Command template (also has $var placeholders)
-    command = f'<invoke working-dir="{_SKILLS_DIR}" cmd="python3 -m {EXPLORE_MODULE_PATH} --step 1 --category $ref --mode $mode{scope_arg}" />'
+    command = f'<invoke working-dir="{_SKILLS_DIR}" cmd="python -m {EXPLORE_MODULE_PATH} --step 1 --category $ref --mode $mode{scope_arg}" />'
 
     node = TemplateDispatchNode(
         agent_type="exploration-capable",
@@ -1148,10 +1148,10 @@ DO NOT modify commands. DO NOT skip steps. DO NOT interpret.
 
     invoke_after = f"""<invoke_after>
   <if_custom>
-    <invoke working-dir="{_SKILLS_DIR}" cmd="python3 -m {MODULE_PATH} --step 2 --mode custom{scope_arg}" />
+    <invoke working-dir="{_SKILLS_DIR}" cmd="python -m {MODULE_PATH} --step 2 --mode custom{scope_arg}" />
   </if_custom>
   <if_not_custom>
-    <invoke working-dir="{_SKILLS_DIR}" cmd="python3 -m {MODULE_PATH} --step 2 --n {n} --mode $MODE{scope_arg}" />
+    <invoke working-dir="{_SKILLS_DIR}" cmd="python -m {MODULE_PATH} --step 2 --n {n} --mode $MODE{scope_arg}" />
   </if_not_custom>
 </invoke_after>"""
     parts.append(invoke_after)
@@ -1199,7 +1199,7 @@ DO NOT modify commands. DO NOT skip steps. DO NOT interpret.
 
     # Non-custom: jump to step 4 (triage), skipping step 3 (verification)
     scope_arg = f" --scope {shlex.quote(scope)}" if scope else ""
-    parts.append(render_invoke_after(InvokeAfterNode(cmd=f"python3 -m {MODULE_PATH} --step 4 --mode {mode_filter}{scope_arg}")))
+    parts.append(render_invoke_after(InvokeAfterNode(cmd=f"python -m {MODULE_PATH} --step 4 --mode {mode_filter}{scope_arg}")))
 
     return "\n".join(parts)
 
@@ -1263,7 +1263,7 @@ def format_step_2_custom(info: dict, scope: str | None = None) -> str:
 
     # Next step: verification (step 3)
     scope_arg = f" --scope {shlex.quote(scope)}" if scope else ""
-    parts.append(render_invoke_after(InvokeAfterNode(cmd=f"python3 -m {MODULE_PATH} --step 3 --mode custom{scope_arg}")))
+    parts.append(render_invoke_after(InvokeAfterNode(cmd=f"python -m {MODULE_PATH} --step 3 --mode custom{scope_arg}")))
 
     return "\n".join(parts)
 
@@ -1327,15 +1327,15 @@ def format_step_3_verification(info: dict, scope: str | None = None, retry: int 
         # Still have retry budget
         invoke_after = f"""<invoke_after>
   <if_revise>
-    <invoke working-dir="{_SKILLS_DIR}" cmd="python3 -m {MODULE_PATH} --step 3 --mode custom{scope_arg} --retry 1" />
+    <invoke working-dir="{_SKILLS_DIR}" cmd="python -m {MODULE_PATH} --step 3 --mode custom{scope_arg} --retry 1" />
   </if_revise>
   <if_pass>
-    <invoke working-dir="{_SKILLS_DIR}" cmd="python3 -m {MODULE_PATH} --step 4 --mode custom{scope_arg}" />
+    <invoke working-dir="{_SKILLS_DIR}" cmd="python -m {MODULE_PATH} --step 4 --mode custom{scope_arg}" />
   </if_pass>
 </invoke_after>"""
     else:
         # Retry budget exhausted - proceed regardless
-        invoke_after = render_invoke_after(InvokeAfterNode(cmd=f"python3 -m {MODULE_PATH} --step 4 --mode custom{scope_arg}"))
+        invoke_after = render_invoke_after(InvokeAfterNode(cmd=f"python -m {MODULE_PATH} --step 4 --mode custom{scope_arg}"))
 
     parts.append(invoke_after)
 
@@ -1354,7 +1354,7 @@ def format_step_4_dispatch_custom(info: dict, scope: str | None = None) -> str:
 
     scope_display = scope or "entire codebase"
     scope_arg = f" --scope {shlex.quote(scope)}" if scope else ""
-    invoke_cmd = f'<invoke working-dir="{_SKILLS_DIR}" cmd="python3 -m {EXPLORE_MODULE_PATH} --step 1 --category $CATEGORY_REF --mode code{scope_arg}" />'
+    invoke_cmd = f'<invoke working-dir="{_SKILLS_DIR}" cmd="python -m {EXPLORE_MODULE_PATH} --step 1 --category $CATEGORY_REF --mode code{scope_arg}" />'
 
     actions = [
         "DISPATCH exploration sub-agents for verified categories.",
@@ -1394,7 +1394,7 @@ def format_step_4_dispatch_custom(info: dict, scope: str | None = None) -> str:
     parts.append("")
 
     # Next step: Triage (step 5 in custom mode)
-    parts.append(render_invoke_after(InvokeAfterNode(cmd=f"python3 -m {MODULE_PATH} --step 5")))
+    parts.append(render_invoke_after(InvokeAfterNode(cmd=f"python -m {MODULE_PATH} --step 5")))
 
     return "\n".join(parts)
 
@@ -1412,7 +1412,7 @@ def format_step_4_triage(info: dict) -> str:
     parts.append("")
 
     # Non-custom: step 4 (triage) -> step 6 (cluster), skipping step 5
-    parts.append(render_invoke_after(InvokeAfterNode(cmd=f"python3 -m {MODULE_PATH} --step 6")))
+    parts.append(render_invoke_after(InvokeAfterNode(cmd=f"python -m {MODULE_PATH} --step 6")))
 
     return "\n".join(parts)
 
@@ -1428,7 +1428,7 @@ def format_step_5_triage(info: dict) -> str:
     parts.append(render_current_action(CurrentActionNode(actions)))
     parts.append("")
 
-    parts.append(render_invoke_after(InvokeAfterNode(cmd=f"python3 -m {MODULE_PATH} --step 6")))
+    parts.append(render_invoke_after(InvokeAfterNode(cmd=f"python -m {MODULE_PATH} --step 6")))
 
     return "\n".join(parts)
 
@@ -1444,7 +1444,7 @@ def format_step_6_cluster(info: dict) -> str:
     parts.append(render_current_action(CurrentActionNode(actions)))
     parts.append("")
 
-    parts.append(render_invoke_after(InvokeAfterNode(cmd=f"python3 -m {MODULE_PATH} --step 7")))
+    parts.append(render_invoke_after(InvokeAfterNode(cmd=f"python -m {MODULE_PATH} --step 7")))
 
     return "\n".join(parts)
 
@@ -1460,7 +1460,7 @@ def format_step_7_contextualize(info: dict) -> str:
     parts.append(render_current_action(CurrentActionNode(actions)))
     parts.append("")
 
-    parts.append(render_invoke_after(InvokeAfterNode(cmd=f"python3 -m {MODULE_PATH} --step 8")))
+    parts.append(render_invoke_after(InvokeAfterNode(cmd=f"python -m {MODULE_PATH} --step 8")))
 
     return "\n".join(parts)
 

@@ -10,7 +10,7 @@ workflow.
 
 ## Invocation
 
-<invoke working-dir="{{SKILLS_DIR}}" cmd="python3 -m skills.incoherence.incoherence --step-number 1 --thoughts '<context>'" />
+<invoke working-dir="{{SKILLS_DIR}}" cmd="python -m skills.incoherence.incoherence --step-number 1 --thoughts '<context>'" />
 
 | Argument        | Required | Description                               |
 | --------------- | -------- | ----------------------------------------- |

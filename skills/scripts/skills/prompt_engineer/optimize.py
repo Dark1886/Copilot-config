@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """
 Prompt Engineer Skill - Scope-adaptive prompt optimization workflow.
 
@@ -1017,7 +1017,7 @@ def build_next_command(step: int, scope: str | None, categories: list[str] | Non
     - Step N-1 (pre-injection): appends --categories <SELECTED_CATEGORIES> placeholder
     - Steps with categories: passes --categories through to subsequent steps
     """
-    base = f'python3 -m {MODULE_PATH}'
+    base = f'python -m {MODULE_PATH}'
 
     if step == 1:
         return f'{base} --step 2 --scope <determined-scope>'

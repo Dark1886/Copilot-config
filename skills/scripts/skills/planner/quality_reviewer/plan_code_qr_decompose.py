@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """QR decomposition for plan-code phase.
 
 Scope: Code correctness in planned changes.

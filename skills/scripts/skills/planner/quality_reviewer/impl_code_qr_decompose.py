@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """QR decomposition for impl-code phase.
 
 Scope: Implemented code quality.

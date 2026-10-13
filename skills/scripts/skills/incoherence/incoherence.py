@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """
 Incoherence Detector - Step-based incoherence detection workflow
 
@@ -189,7 +189,7 @@ CRITICAL: All script outputs use XML format. You MUST:
     if step >= total or "COMPLETE" in next_text.upper():
         parts.append("WORKFLOW COMPLETE - Present report to user.")
     else:
-        next_cmd = f'python3 -m skills.incoherence.incoherence --step-number {step + 1}'
+        next_cmd = f'python -m skills.incoherence.incoherence --step-number {step + 1}'
         parts.append(render_invoke_after(InvokeAfterNode(cmd=next_cmd)))
 
     return "\n".join(parts)
@@ -232,7 +232,7 @@ STEPS = {
             "",
             "AGENT PROMPT:",
             f"  DIMENSION: {{letter}} - {{name}}. DESCRIPTION: {{from_catalog}}",
-            f'  Start: <invoke working-dir="{_SKILLS_DIR}" cmd="python3 -m {MODULE_PATH} --step-number 4 --thoughts \\"Dimension: {{{{letter}}}}\\"" />',
+            f'  Start: <invoke working-dir="{_SKILLS_DIR}" cmd="python -m {MODULE_PATH} --step-number 4 --thoughts \\"Dimension: {{{{letter}}}}\\"" />',
         ],
         "next": "After all agents complete, invoke step 8 with combined findings"
     },
@@ -317,7 +317,7 @@ STEPS = {
             f"  CANDIDATE: {{id}} at {{location}} | DIMENSION: {{letter}} - {{name}}",
             f"  Claimed: {{summary}}",
             f"  Workflow: step 10 (explore) -> step 11 (format)",
-            f'  Start: <invoke working-dir="{_SKILLS_DIR}" cmd="python3 -m {MODULE_PATH} --step-number 10 --thoughts \\"Verifying: {{{{id}}}}\\"" />',
+            f'  Start: <invoke working-dir="{_SKILLS_DIR}" cmd="python -m {MODULE_PATH} --step-number 10 --thoughts \\"Verifying: {{{{id}}}}\\"" />',
         ],
         "next": "After all agents complete, invoke step 12 with all verdicts"
     },
@@ -461,7 +461,7 @@ STEPS = {
             f"  TARGET: {{file}} | ISSUES: {{ids}}",
             f"  Per issue: type, severity, sources, analysis, resolution_text",
             f"  Workflow: step 18 (apply) -> step 19 (format)",
-            f'  Start: <invoke working-dir="{_SKILLS_DIR}" cmd="python3 -m {MODULE_PATH} --step-number 18 --thoughts \\"FILE: {{{{file}}}}\\"" />',
+            f'  Start: <invoke working-dir="{_SKILLS_DIR}" cmd="python -m {MODULE_PATH} --step-number 18 --thoughts \\"FILE: {{{{file}}}}\\"" />',
             "",
             "Launch ALL wave agents in SINGLE message.",
         ],

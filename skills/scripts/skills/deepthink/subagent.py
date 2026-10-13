@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """
 DeepThink Sub-Agent Workflow - Perspective-specific analysis.
 
@@ -418,7 +418,7 @@ def build_next_command(step: int) -> str | None:
     """Build invoke command for next step."""
     if step >= TOTAL_STEPS:
         return None
-    return f"python3 -m {MODULE_PATH} --step {step + 1}"
+    return f"python -m {MODULE_PATH} --step {step + 1}"
 
 
 # ============================================================================

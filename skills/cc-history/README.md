@@ -73,10 +73,10 @@ The documentation approach lets the LLM compose queries on demand rather than le
 
 ### Skill Recognition Pattern
 
-Skills are invoked via bash with pattern `python3 -m skills.{name}.{module}`. This pattern is general enough to capture all skills without enumeration:
+Skills are invoked via bash with pattern `python -m skills.{name}.{module}`. This pattern is general enough to capture all skills without enumeration:
 
 ```regex
-python3 -m skills\.([a-z_]+)\.
+python -m skills\.([a-z_]+)\.
 ```
 
 Capture group 1 extracts the skill name. No need to maintain a list of valid skill names.
@@ -121,13 +121,13 @@ done | sort -rn | head -10
 
 ```bash
 # Which skills were used in a conversation?
-grep -oE "python3 -m skills\.[a-z_]+" file.jsonl | \
-  sed 's/python3 -m skills\.//' | \
+grep -oE "python -m skills\.[a-z_]+" file.jsonl | \
+  sed 's/python -m skills\.//' | \
   cut -d. -f1 | \
   sort -u
 
 # Find all planner skill conversations
-grep -l "python3 -m skills\.planner\." "$PROJECT_DIR"/*.jsonl
+grep -l "python -m skills\.planner\." "$PROJECT_DIR"/*.jsonl
 ```
 
 ### Token Growth Analysis

@@ -61,7 +61,7 @@ node = TemplateDispatchNode(
     agent_type="general-purpose",
     template="Explore $category in $mode mode",
     targets=({"category": "Naming", "mode": "code"}, ...),
-    command='python3 -m skills.explore --category $category',
+    command='python -m skills.explore --category $category',
     model="haiku",
 )
 xml = render_template_dispatch(node)
@@ -71,7 +71,7 @@ node = RosterDispatchNode(
     agent_type="general-purpose",
     shared_context="Background...",
     agents=("Task 1...", "Task 2...", "Task 3..."),
-    command='python3 -m skills.subagent --step 1',
+    command='python -m skills.subagent --step 1',
     model="sonnet",
 )
 xml = render_roster_dispatch(node)

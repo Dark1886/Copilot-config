@@ -122,14 +122,14 @@ jq -c 'select(.type=="assistant") | .message.content[]? | select(.type=="tool_us
 
 ### Skill Invocation Detection
 
-Pattern: `python3 -m skills\.([a-z_]+)\.`
+Pattern: `python -m skills\.([a-z_]+)\.`
 
 ```bash
 # Find all skill invocations
-grep -oE "python3 -m skills\.[a-z_]+" file.jsonl | sort -u
+grep -oE "python -m skills\.[a-z_]+" file.jsonl | sort -u
 
 # Find conversations using a specific skill
-grep -l "python3 -m skills\.planner\." "$PROJECT_DIR"/*.jsonl
+grep -l "python -m skills\.planner\." "$PROJECT_DIR"/*.jsonl
 ```
 
 ### Token Usage

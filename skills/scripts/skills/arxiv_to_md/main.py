@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """arxiv-to-md orchestrator: Parse input, dispatch sub-agents, rename outputs.
 
 Two invocation modes:
@@ -75,7 +75,7 @@ MODE1_TEMPLATE = (
     "\n"
     "arXiv ID: $ARXIV_ID\n"
     "\n"
-    f"Start: <invoke working-dir=\"{_SKILLS_DIR}\" cmd=\"python3 -m skills.arxiv_to_md.sub_agent --step 1 --arxiv-id $ARXIV_ID\" />\n"
+    f"Start: <invoke working-dir=\"{_SKILLS_DIR}\" cmd=\"python -m skills.arxiv_to_md.sub_agent --step 1 --arxiv-id $ARXIV_ID\" />\n"
     "\n"
     "<expected_output>\n"
     "Sub-agent responds with ONLY:\n"
@@ -143,7 +143,7 @@ MODE2_TEMPLATE = (
     "arXiv ID: $ARXIV_ID\n"
     "Destination: $DEST_FILE\n"
     "\n"
-    f"Start: <invoke working-dir=\"{_SKILLS_DIR}\" cmd=\"python3 -m skills.arxiv_to_md.sub_agent --step 1 --arxiv-id $ARXIV_ID --dest-file '$DEST_FILE'\" />\n"
+    f"Start: <invoke working-dir=\"{_SKILLS_DIR}\" cmd=\"python -m skills.arxiv_to_md.sub_agent --step 1 --arxiv-id $ARXIV_ID --dest-file '$DEST_FILE'\" />\n"
     "\n"
     "<expected_output>\n"
     "Sub-agent responds with ONLY:\n"
@@ -269,7 +269,7 @@ def build_mode1_dispatch() -> str:
         agent_type="general-purpose",
         template=MODE1_TEMPLATE,
         targets=[{"ARXIV_ID": "EXAMPLE"}],
-        command=f'python3 -m {SUBAGENT_MODULE_PATH} --step 1 --arxiv-id $ARXIV_ID',
+        command=f'python -m {SUBAGENT_MODULE_PATH} --step 1 --arxiv-id $ARXIV_ID',
         model="opus",
         instruction="Launch one sub-agent per arXiv ID.\nUse a SINGLE message with multiple Task tool calls.\n\nThese markdown files become the scientific basis for downstream work.\nCost of error amplifies: subpar markdown -> subpar knowledge.",
     )
@@ -281,7 +281,7 @@ def build_mode2_dispatch() -> str:
         agent_type="general-purpose",
         template=MODE2_TEMPLATE,
         targets=[{"ARXIV_ID": "EXAMPLE", "DEST_FILE": "EXAMPLE"}],
-        command=f'python3 -m {SUBAGENT_MODULE_PATH} --step 1 --arxiv-id $ARXIV_ID --dest-file \'$DEST_FILE\'',
+        command=f'python -m {SUBAGENT_MODULE_PATH} --step 1 --arxiv-id $ARXIV_ID --dest-file \'$DEST_FILE\'',
         model="opus",
         instruction="Launch one sub-agent per arXiv ID.\nUse a SINGLE message with multiple Task tool calls.\n\nThese markdown files become the scientific basis for downstream work.\nCost of error amplifies: subpar markdown -> subpar knowledge.",
     )
@@ -300,9 +300,9 @@ def build_discover_body() -> str:
 def build_next_command(step: int) -> str | None:
     """Build invoke command for next step."""
     if step == 1:
-        return f'python3 -m {MODULE_PATH} --step 2'
+        return f'python -m {MODULE_PATH} --step 2'
     elif step == 2:
-        return f'python3 -m {MODULE_PATH} --step 3'
+        return f'python -m {MODULE_PATH} --step 3'
     elif step == 3:
         return None
     return None
