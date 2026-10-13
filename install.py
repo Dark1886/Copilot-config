@@ -42,6 +42,36 @@ TOOL_PROFILES = {
         "MODEL_GENERAL_PURPOSE": "claude-sonnet-4-6",
         "MODEL_CHEAP": "claude-haiku-4-5",
     },
+    # Project-level install into a repo's .github/ directory, where Copilot
+    # CLI discovers skills (.github/skills/) and custom agents (.github/agents/).
+    "copilot": {
+        "CONFIG_DIR": ".github",
+        "SKILLS_DIR": ".github/skills/scripts",
+        "AGENTS_MD": "AGENTS.md",
+        "MODEL_STRONG": "claude-opus-4.6",
+        "MODEL_GENERAL_PURPOSE": "claude-sonnet-4.6",
+        "MODEL_CHEAP": "claude-haiku-4.5",
+    },
+}
+
+# Per-tool layout rules that go beyond {{VAR}} substitution.
+#   agent_suffix: filename suffix for files under agents/ (replaces ".md")
+#   agent_tools:  maps tool names in agent frontmatter to the tool's own names;
+#                 names mapping to None are dropped
+TOOL_LAYOUTS = {
+    "copilot": {
+        "agent_suffix": ".agent.md",
+        "agent_tools": {
+            "read": "read",
+            "grep": "search",
+            "find": "search",
+            "ls": "search",
+            "bash": "execute",
+            "write": "edit",
+            "web_search": "web",
+            "web_fetch": "web",
+        },
+    },
 }
 
 TEMPLATE_DEFAULTS = {
@@ -71,22 +101,80 @@ def is_template_rel_path(rel_path: str) -> bool:
     return any(name.endswith(suffix) for suffix in TEMPLATE_SUFFIXES)
 
 
-def render_install_rel_path(rel_path: str) -> str:
-    """Map source path to installed path by stripping `.tpl` from filename."""
-    if not is_template_rel_path(rel_path):
-        return rel_path
+def is_agent_rel_path(rel_path: str) -> bool:
+    """Return True if file is an agent definition (agents/*.md)."""
+    parts = Path(rel_path).parts
+    return len(parts) == 2 and parts[0] == "agents" and parts[1].endswith(".md")
+
+
+def render_install_rel_path(rel_path: str, layout: dict | None = None) -> str:
+    """Map source path to installed path.
+
+    Strips `.tpl` from template filenames, then applies the tool layout's
+    agent filename suffix (e.g. Copilot requires `*.agent.md`).
+    """
     path = Path(rel_path)
-    rendered_name = path.name.replace(".tpl.", ".", 1)
+    rendered_name = path.name
+    if is_template_rel_path(rel_path):
+        rendered_name = rendered_name.replace(".tpl.", ".", 1)
+    suffix = (layout or {}).get("agent_suffix")
+    if suffix and is_agent_rel_path(rel_path) and not rendered_name.endswith(suffix):
+        rendered_name = rendered_name[: -len(".md")] + suffix
     return str(path.with_name(rendered_name))
 
 
-def build_install_file_map(source: Path) -> dict[str, str]:
+def remap_agent_tools(content: str, tool_map: dict) -> str:
+    """Rewrite the `tools:` frontmatter line using the tool layout's name map.
+
+    Preserves first-seen order and drops duplicates, since several source
+    tools can collapse into one target tool (grep/find/ls -> search).
+    Content without YAML frontmatter is returned unchanged.
+    """
+    lines = content.split("\n")
+    if not lines or lines[0] != "---":
+        return content
+    for i in range(1, len(lines)):
+        line = lines[i]
+        if line == "---":
+            break
+        if not line.startswith("tools:"):
+            continue
+        mapped: list[str] = []
+        for name in (t.strip() for t in line[len("tools:"):].split(",")):
+            if not name:
+                continue
+            target = tool_map.get(name, name)
+            if target and target not in mapped:
+                mapped.append(target)
+        lines[i] = "tools: [" + ", ".join(f'"{t}"' for t in mapped) + "]"
+        break
+    return "\n".join(lines)
+
+
+def needs_render(source_rel_path: str, layout: dict | None) -> bool:
+    """Return True if file content is transformed on install (vs. copied verbatim)."""
+    if is_template_rel_path(source_rel_path):
+        return True
+    return bool((layout or {}).get("agent_tools")) and is_agent_rel_path(source_rel_path)
+
+
+def render_content(source_rel_path: str, content: str, variables: dict, layout: dict | None) -> str:
+    """Produce installed text content: {{VAR}} substitution plus layout rewrites."""
+    if is_template_rel_path(source_rel_path):
+        content = process_templates(content, variables)
+    tool_map = (layout or {}).get("agent_tools")
+    if tool_map and is_agent_rel_path(source_rel_path):
+        content = remap_agent_tools(content, tool_map)
+    return content
+
+
+def build_install_file_map(source: Path, layout: dict | None = None) -> dict[str, str]:
     """Build {installed_rel_path: source_rel_path} map for tracked install files."""
     file_map: dict[str, str] = {}
     for source_rel_path in get_tracked_files(source):
         if should_exclude(source_rel_path):
             continue
-        install_rel_path = render_install_rel_path(source_rel_path)
+        install_rel_path = render_install_rel_path(source_rel_path, layout)
         if install_rel_path in file_map:
             print(
                 "ERROR: Multiple source files map to the same install path: "
@@ -98,11 +186,10 @@ def build_install_file_map(source: Path) -> dict[str, str]:
     return file_map
 
 
-def copy_file(src: Path, dst: Path, variables: dict, is_template: bool) -> None:
-    """Copy file, applying template substitution for `.tpl` files."""
-    if is_template:
-        content = src.read_text()
-        processed = process_templates(content, variables)
+def copy_file(src: Path, dst: Path, source_rel_path: str, variables: dict, layout: dict | None) -> None:
+    """Copy file, applying template substitution and layout rewrites where needed."""
+    if needs_render(source_rel_path, layout):
+        processed = render_content(source_rel_path, src.read_text(), variables, layout)
         dst.parent.mkdir(parents=True, exist_ok=True)
         dst.write_text(processed)
         shutil.copystat(src, dst)
@@ -132,16 +219,15 @@ def sha256_file(path: Path) -> str:
     return h.hexdigest()
 
 
-def hash_content(src: Path, variables: dict, is_template: bool) -> str:
+def hash_content(src: Path, source_rel_path: str, variables: dict, layout: dict | None) -> str:
     """Compute SHA256 of file content as it would be installed.
 
-    Applies template substitution for `.tpl` files, matching copy_file().
+    Applies the same rendering as copy_file().
     This enables dry-run to detect whether an upgrade would actually
     change a file.
     """
-    if is_template:
-        content = src.read_text()
-        processed = process_templates(content, variables)
+    if needs_render(source_rel_path, layout):
+        processed = render_content(source_rel_path, src.read_text(), variables, layout)
         return hashlib.sha256(processed.encode()).hexdigest()
     return sha256_file(src)
 
@@ -210,6 +296,7 @@ def install(
     dry_run: bool = False,
     variables: dict = None,
     verbose: bool = False,
+    layout: dict | None = None,
 ) -> None:
     """Fresh install from source to target."""
     if variables is None:
@@ -219,7 +306,7 @@ def install(
         print("ERROR: Manifest exists. Use 'upgrade' instead.", file=sys.stderr)
         sys.exit(1)
 
-    install_file_map = build_install_file_map(source)
+    install_file_map = build_install_file_map(source, layout)
     manifest = {
         "version": MANIFEST_VERSION,
         "source_commit": get_head_commit(source),
@@ -236,7 +323,7 @@ def install(
         if dry_run:
             log_file_operation("NEW", dst_file, dry_run, verbose)
         else:
-            copy_file(src_file, dst_file, variables, is_template_rel_path(source_rel_path))
+            copy_file(src_file, dst_file, source_rel_path, variables, layout)
             log_file_operation("NEW", dst_file, dry_run, verbose)
             manifest["files"][rel_path] = {
                 "sha256": sha256_file(dst_file),
@@ -256,6 +343,7 @@ def upgrade(
     force: bool,
     variables: dict = None,
     verbose: bool = False,
+    layout: dict | None = None,
 ) -> None:
     """Upgrade existing installation."""
     if variables is None:
@@ -275,7 +363,7 @@ def upgrade(
     if not dry_run:
         marker.write_text(datetime.now(timezone.utc).isoformat())
 
-    install_file_map = build_install_file_map(source)
+    install_file_map = build_install_file_map(source, layout)
     new_files = set(install_file_map.keys())
     old_files = set(old_manifest["files"].keys())
 
@@ -299,7 +387,7 @@ def upgrade(
         src_file = source / source_rel_path
         dst_file = target / rel_path
 
-        src_hash = hash_content(src_file, variables, is_template_rel_path(source_rel_path))
+        src_hash = hash_content(src_file, source_rel_path, variables, layout)
         old_hash = old_manifest["files"][rel_path]["sha256"]
         changed = src_hash != old_hash
 
@@ -323,7 +411,7 @@ def upgrade(
         if dry_run:
             log_file_operation("UPDATE", dst_file, dry_run, verbose)
         else:
-            copy_file(src_file, dst_file, variables, is_template_rel_path(source_rel_path))
+            copy_file(src_file, dst_file, source_rel_path, variables, layout)
             log_file_operation("UPDATE", dst_file, dry_run, verbose)
             new_manifest["files"][rel_path] = {
                 "sha256": sha256_file(dst_file),
@@ -339,7 +427,7 @@ def upgrade(
         if dry_run:
             log_file_operation("NEW", dst_file, dry_run, verbose)
         else:
-            copy_file(src_file, dst_file, variables, is_template_rel_path(source_rel_path))
+            copy_file(src_file, dst_file, source_rel_path, variables, layout)
             log_file_operation("NEW", dst_file, dry_run, verbose)
             new_manifest["files"][rel_path] = {
                 "sha256": sha256_file(dst_file),
@@ -456,7 +544,8 @@ def main():
                              "remove orphans even if modified")
     parser.add_argument("--source", type=Path, help="Source repo path")
     parser.add_argument("--target", type=Path, required=True,
-                        help="Target directory (e.g. ~/.claude, ~/.pi/agent, ~/.openclaw)")
+                        help="Target directory (e.g. ~/.claude, ~/.pi/agent, ~/.openclaw, "
+                             "<repo>/.github for copilot)")
     parser.add_argument("--tool", choices=list(TOOL_PROFILES.keys()), required=True,
                         help="Target tool profile for template substitution")
     args = parser.parse_args()
@@ -465,15 +554,16 @@ def main():
 
     source = args.source or Path(__file__).parent
     variables = {**TEMPLATE_DEFAULTS, **TOOL_PROFILES[args.tool]}
+    layout = TOOL_LAYOUTS.get(args.tool)
 
     if args.command in ("install", "upgrade") and not source.is_dir():
         print(f"ERROR: Source directory not found: {source}", file=sys.stderr)
         sys.exit(1)
 
     if args.command == "install":
-        install(source, args.target, args.dry_run, variables, args.verbose)
+        install(source, args.target, args.dry_run, variables, args.verbose, layout)
     elif args.command == "upgrade":
-        upgrade(source, args.target, args.dry_run, args.force, variables, args.verbose)
+        upgrade(source, args.target, args.dry_run, args.force, variables, args.verbose, layout)
     elif args.command == "uninstall":
         uninstall(args.target, args.dry_run, args.force, args.verbose)
 

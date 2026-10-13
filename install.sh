@@ -20,10 +20,11 @@ Usage: install.sh --tool TOOL [OPTIONS]
 Install, upgrade, or uninstall AI coding tool configuration.
 
 Required:
-  --tool TOOL       Target tool profile (claude, pi, openclaw)
+  --tool TOOL       Target tool profile (claude, pi, openclaw, copilot)
 
 Options:
-  --target DIR      Target directory (default: derived from --tool)
+  --target DIR      Target directory (default: derived from --tool;
+                    for copilot: <git root of current dir>/.github)
                     May be specified multiple times for multi-target install
   --uninstall       Remove all managed files from target
   --dry-run         Preview changes without writing
@@ -37,6 +38,8 @@ Examples:
   install.sh --tool openclaw                        # Install/upgrade to discovered OpenClaw root
   install.sh --tool openclaw --target ~/.openclaw  # Explicit OpenClaw root
   install.sh --tool claude --target ~/git/repo/.claude  # Project-specific
+  install.sh --tool copilot                         # Install/upgrade into ./.github of current repo
+  install.sh --tool copilot --target ~/git/repo/.github  # Explicit Copilot CLI project
   install.sh --tool claude --dry-run                # Preview changes
   install.sh --tool pi --verbose                    # Show all file operations
   install.sh --tool claude --uninstall              # Remove managed files
@@ -82,7 +85,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [[ -z "$TOOL" ]]; then
-    echo "ERROR: --tool is required (e.g. --tool claude, --tool pi, --tool openclaw)" >&2
+    echo "ERROR: --tool is required (e.g. --tool claude, --tool pi, --tool openclaw, --tool copilot)" >&2
     exit 1
 fi
 
@@ -182,19 +185,36 @@ resolve_openclaw_default_target() {
     exit 1
 }
 
+# Copilot CLI discovers project skills and agents under <repo>/.github/, so
+# the default target is the .github/ directory of the current git repository.
+resolve_copilot_default_target() {
+    local toplevel
+    if ! toplevel="$(git rev-parse --show-toplevel 2>/dev/null)"; then
+        echo "ERROR: --tool copilot installs into a project's .github/ directory," >&2
+        echo "  but the current directory is not inside a git repository." >&2
+        echo "Run from the project, or: $0 --tool copilot --target /path/to/repo/.github" >&2
+        exit 1
+    fi
+
+    toplevel="$(normalize_path "$toplevel")"
+    if [[ "$toplevel" == "$(normalize_path "$REPO_DIR")" ]]; then
+        echo "ERROR: Refusing to install into the config source repo itself ($toplevel)." >&2
+        echo "Run from the target project, or pass --target /path/to/repo/.github" >&2
+        exit 1
+    fi
+
+    echo "$toplevel/.github"
+}
+
 tool_default_target() {
     case "$1" in
         claude)   echo "$HOME/.claude" ;;
         pi)       echo "$HOME/.pi/agent" ;;
         openclaw) resolve_openclaw_default_target ;;
+        copilot)  resolve_copilot_default_target ;;
         *)        echo "ERROR: Unknown tool: $1" >&2; exit 1 ;;
     esac
 }
-
-# Default target if none specified
-if [[ ${#TARGETS[@]} -eq 0 ]]; then
-    TARGETS=("$(tool_default_target "$TOOL")")
-fi
 
 # -- Prerequisites -----------------------------------------------------------
 
@@ -281,6 +301,12 @@ run_installer() {
 
 check_prereqs
 ensure_repo
+
+# Default target if none specified (after ensure_repo: copilot compares
+# against REPO_DIR to avoid installing into the source repo)
+if [[ ${#TARGETS[@]} -eq 0 ]]; then
+    TARGETS=("$(tool_default_target "$TOOL")")
+fi
 
 for target in "${TARGETS[@]}"; do
     run_installer "$target"
