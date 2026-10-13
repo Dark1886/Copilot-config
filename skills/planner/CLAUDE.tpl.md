@@ -25,7 +25,7 @@ Scripts reference these conventions from `.claude/conventions/`:
 
 | Convention          | When to read                                 |
 | ------------------- | -------------------------------------------- |
-| `documentation.tpl.md` | Understanding CLAUDE.md/README.md format   |
+| `documentation.tpl.md` | Understanding {{AGENTS_MD}}/README.md format   |
 | `structural.md`     | Updating QR RULE 2 or planner decision audit |
 | `temporal.md`       | Updating TW/QR temporal contamination logic  |
 | `severity.md`       | Understanding QR severity levels             |

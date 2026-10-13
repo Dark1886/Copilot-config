@@ -54,7 +54,8 @@ Example:
 <invoke working-dir=".claude/skills/scripts" cmd="python -m skills.problem_analysis.analyze --step 1" />
 
 Note: source templates are named `SKILL.tpl.md` in each skill directory. The
-installer renders them to `SKILL.md` and substitutes variables like
-`{{SKILLS_DIR}}` with the correct path per target tool (e.g.,
-`.claude/skills/scripts` for Claude Code, `.pi/agent/skills/scripts` for Pi).
-This CLAUDE.md is a development artifact and is never installed.
+installer renders them to `SKILL.md` and substitutes `SKILLS_DIR` placeholders
+with the correct path per target tool (e.g., `.claude/skills/scripts` for
+Claude Code, `.pi/agent/skills/scripts` for Pi). Index files like this one are
+`CLAUDE.tpl.md` in the source and are installed under the tool's index file
+name (`CLAUDE.md` for Claude Code, `AGENTS.md` for Pi, OpenClaw and Copilot).

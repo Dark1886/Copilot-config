@@ -16,8 +16,8 @@ MANIFEST_FILE = ".install-manifest.json"
 MANIFEST_VERSION = 1
 
 ALWAYS_EXCLUSIONS = {".git", ".github"}
-# Per-directory CLAUDE.md/README.md pairs are installed (agents navigate by
-# them); only the repo's own top-level README is excluded.
+# Only the repo's own top-level README is excluded; per-directory READMEs are
+# installed alongside the index files that point to them.
 ROOT_EXCLUSIONS = {"install.py", "install.sh", ".gitignore", "LICENSE", "README.md", "manifest-plan.md", MANIFEST_FILE}
 
 TOOL_PROFILES = {
@@ -80,6 +80,10 @@ TEMPLATE_DEFAULTS = {
     "AGENTS_MD": "AGENTS.md",
 }
 
+# Per-directory index files are stored under this name in the source and
+# installed under the tool profile's AGENTS_MD name (CLAUDE.md, AGENTS.md, ...).
+INDEX_TEMPLATE_NAME = "CLAUDE.tpl.md"
+
 TEMPLATE_PATTERN = re.compile(r"\{\{(\w+)\}\}")
 TEMPLATE_SUFFIXES = (".tpl.md", ".tpl.py")
 
@@ -109,15 +113,18 @@ def is_agent_rel_path(rel_path: str) -> bool:
     return len(parts) == 2 and parts[0] == "agents" and parts[1].endswith(".md")
 
 
-def render_install_rel_path(rel_path: str, layout: dict | None = None) -> str:
+def render_install_rel_path(rel_path: str, layout: dict | None = None, variables: dict | None = None) -> str:
     """Map source path to installed path.
 
-    Strips `.tpl` from template filenames, then applies the tool layout's
-    agent filename suffix (e.g. Copilot requires `*.agent.md`).
+    Renames index templates to the profile's AGENTS_MD, strips `.tpl` from
+    other template filenames, then applies the tool layout's agent filename
+    suffix (e.g. Copilot requires `*.agent.md`).
     """
     path = Path(rel_path)
     rendered_name = path.name
-    if is_template_rel_path(rel_path):
+    if rendered_name == INDEX_TEMPLATE_NAME:
+        rendered_name = {**TEMPLATE_DEFAULTS, **(variables or {})}["AGENTS_MD"]
+    elif is_template_rel_path(rel_path):
         rendered_name = rendered_name.replace(".tpl.", ".", 1)
     suffix = (layout or {}).get("agent_suffix")
     if suffix and is_agent_rel_path(rel_path) and not rendered_name.endswith(suffix):
@@ -170,13 +177,13 @@ def render_content(source_rel_path: str, content: str, variables: dict, layout: 
     return content
 
 
-def build_install_file_map(source: Path, layout: dict | None = None) -> dict[str, str]:
+def build_install_file_map(source: Path, layout: dict | None = None, variables: dict | None = None) -> dict[str, str]:
     """Build {installed_rel_path: source_rel_path} map for tracked install files."""
     file_map: dict[str, str] = {}
     for source_rel_path in get_tracked_files(source):
         if should_exclude(source_rel_path):
             continue
-        install_rel_path = render_install_rel_path(source_rel_path, layout)
+        install_rel_path = render_install_rel_path(source_rel_path, layout, variables)
         if install_rel_path in file_map:
             print(
                 "ERROR: Multiple source files map to the same install path: "
@@ -308,7 +315,7 @@ def install(
         print("ERROR: Manifest exists. Use 'upgrade' instead.", file=sys.stderr)
         sys.exit(1)
 
-    install_file_map = build_install_file_map(source, layout)
+    install_file_map = build_install_file_map(source, layout, variables)
     manifest = {
         "version": MANIFEST_VERSION,
         "source_commit": get_head_commit(source),
@@ -365,7 +372,7 @@ def upgrade(
     if not dry_run:
         marker.write_text(datetime.now(timezone.utc).isoformat())
 
-    install_file_map = build_install_file_map(source, layout)
+    install_file_map = build_install_file_map(source, layout, variables)
     new_files = set(install_file_map.keys())
     old_files = set(old_manifest["files"].keys())
 

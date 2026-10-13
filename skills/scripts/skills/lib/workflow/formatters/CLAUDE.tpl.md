@@ -8,4 +8,4 @@ Re-exports from ast/ module for backwards compatibility. Use ast/ directly for n
 | ------------- | ----------------------- | ------------------------ |
 | `__init__.py` | Re-exports from ../ast/ | Checking available types |
 
-See `../ast/CLAUDE.md` for actual implementation.
+See `../ast/{{AGENTS_MD}}` for actual implementation.

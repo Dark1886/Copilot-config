@@ -6,4 +6,4 @@ Reference materials for doc-sync skill.
 
 | File                  | What                            | When to read                               |
 | --------------------- | ------------------------------- | ------------------------------------------ |
-| `trigger-patterns.md` | Examples of good index triggers | Writing "When to read" column in CLAUDE.md |
+| `trigger-patterns.md` | Examples of good index triggers | Writing "When to read" column in {{AGENTS_MD}} |
